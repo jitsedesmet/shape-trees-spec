@@ -1,0 +1,2817 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Shape Trees Specification</title>
+  <meta content="w3c/ED" name="w3c-status">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
+  <meta content="Bikeshed version 82ce88815, updated Thu Sep 7 16:33:55 2023 -0700" name="generator">
+  <link href="https://shapetrees.org/TR/specification/" rel="canonical">
+  <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
+  <meta content="e64c5b25de516e83a8ae1e1215c6b76ae294cfd4" name="document-revision">
+<style>
+
+  em.rfc2119 {
+    text-transform: lowercase;
+    font-variant: small-caps;
+    font-style: normal;
+    font-size: 18px;
+    color: #900;
+  }
+
+  figcaption {
+    text-align: left;
+  }
+
+  pre {
+    font-size: 12px;
+  }
+
+  a[href*=".ttl"] {
+    color: #339966;
+    border-bottom: 1px solid #339966;
+  }
+
+  a[href*=".shex"] {
+    color: #cc2900;
+    border-bottom: 1px solid #cc2900;
+  }
+
+  a[href*=".tree"] {
+    color: #e68a00;
+    border-bottom: 1px solid #e68a00;
+  }
+
+  a[data-link-type=dfn] {
+    color: #000000;
+  }
+
+  table.tree thead tr {
+    font-size: 14px;
+  }
+  
+  table.tree tbody tr:nth-child(even) {
+    background-color: lightgray;
+    font-size: 14px;
+  }
+  
+  table.tree tbody td {
+    font-size: 12px;
+  }
+
+  table.operation {
+    border-collapse: separate;
+    border: 3px solid #808080;
+    margin-bottom: .5em;
+  }
+
+  table.operation thead tr {
+    font-size: 14px;
+  }
+
+  table.operation thead th {
+    background-color: #005A9C;
+    color: #FFF;
+  }
+
+  table.operation th[colspan] {
+    text-align: left;
+  }
+
+  table.operation td[colspan] {
+    text-align: left;
+  }
+
+  table.operation tbody td {
+    font-size: 13px;
+    text-align: left;
+  }
+
+  table.operation code {
+    background-color: #DCDCDC;
+    color: #000;
+    font-size: 13px;
+    padding-left: .2em;
+    padding-right: .2em;
+    padding-top: .05em;
+    padding-bottom: .05em;  
+  }
+
+  .opdetails code {
+    background-color: #DCDCDC; 
+    color: #000;
+    font-weight: bold;
+    font-size: 13px;
+    padding-left: .2em;
+    padding-right: .2em;
+    padding-top: .05em;
+    padding-bottom: .05em;
+  }
+
+  .opdetails code.vocab {
+    color: #339966;
+    background-color: #FFFFFF;
+  }
+
+  .opdetails ol {
+    margin-left: 0;
+    padding-left: 1em;
+  }
+
+	code.container {
+		color: #005555;
+	}
+
+	code.notes {
+		color: #770033;
+	}
+
+	code.citation {
+		color: #330077;
+	}
+
+	code.image {
+		color: #337700;
+	}
+
+    code.vocab {
+		color: #339966;
+	}
+</style>
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example" counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    white-space: pre;
+    display: inline-block;
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: .5em;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+}
+
+.dfn-paneled[role="button"] { cursor: pointer; }
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-selflinks */
+
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+<style>/* Boilerplate: style-syntax-highlighting */
+
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+</style>
+ <body class="h-entry" style="background-color: white; color: black">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
+   <h1 class="p-name no-ref" id="title">Shape Trees Specification</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2023-11-27">27 November 2023</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://shapetrees.org/TR/specification/">https://shapetrees.org/TR/specification/</a>
+      <dt>Issue Tracking:
+      <dd><a href="https://github.com/jitsedesmet/shape-trees-spec/issues/">GitHub</a>
+      <dt class="editor">Editors:
+      <dd class="editor p-author h-card vcard"><span class="p-name fn">Eric Prud'hommeaux</span>
+      <dd class="editor p-author h-card vcard"><span class="p-name fn">Justin Bingham</span>
+     </dl>
+    </div>
+   </details>
+   <div data-fill-with="warning"></div>
+   <p class="copyright" data-fill-with="copyright"> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2020 <a href="https://www.w3.org/">W3C</a>®
+  (<a href="https://www.csail.mit.edu/">MIT</a>, <a href="https://www.ercim.eu/">ERCIM</a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>).
+   W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">permissive document license</a> rules apply. </p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>Semantic Web Applications interoperate by sharing semantics of terms and
+
+    constellations of resource-oriented data structures. This specification
+    defines shape trees, a mechanism for declaring and operating over
+    constellations of resource-oriented data structures.</p>
+  </div>
+  <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p></p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
+   <ol class="toc" role="directory">
+    <li>
+     <a href="#introduction"><span class="secno">1</span> <span class="content">Introduction</span></a>
+     <ol class="toc">
+      <li><a href="#shapetree-support-from-proxy-or-client-side-library"><span class="secno">1.1</span> <span class="content">ShapeTree Support From Proxy or Client-side Library</span></a>
+     </ol>
+    <li>
+     <a href="#tree"><span class="secno">2</span> <span class="content">Shape Tree</span></a>
+     <ol class="toc">
+      <li><a href="#st-schema"><span class="secno">2.1</span> <span class="content">Shape Tree Schema</span></a>
+     </ol>
+    <li>
+     <a href="#assigning"><span class="secno">3</span> <span class="content">Assigning Shape Trees</span></a>
+     <ol class="toc">
+      <li><a href="#manager"><span class="secno">3.1</span> <span class="content">Shape Tree Manager</span></a>
+      <li><a href="#assignment"><span class="secno">3.2</span> <span class="content">Shape Tree Assignment</span></a>
+      <li><a href="#st-manager-schema"><span class="secno">3.3</span> <span class="content">Shape Tree Manager Schema</span></a>
+     </ol>
+    <li>
+     <a href="#operations"><span class="secno">4</span> <span class="content">Shape Tree Operations</span></a>
+     <ol class="toc">
+      <li><a href="#discover"><span class="secno">4.1</span> <span class="content">Discover Shape Tree</span></a>
+      <li><a href="#plant-shapetree"><span class="secno">4.2</span> <span class="content">Plant Shape Tree</span></a>
+      <li><a href="#unplant-shapetree"><span class="secno">4.3</span> <span class="content">Unplant Shape Tree</span></a>
+      <li><a href="#create-managed-instance"><span class="secno">4.4</span> <span class="content">Create Managed Instance</span></a>
+      <li><a href="#update-managed-instance"><span class="secno">4.5</span> <span class="content">Update Managed Instance</span></a>
+      <li><a href="#delete-managed-instance"><span class="secno">4.6</span> <span class="content">Delete Managed Instance</span></a>
+     </ol>
+    <li>
+     <a href="#algorithms"><span class="secno">5</span> <span class="content">Shape Tree Algorithms</span></a>
+     <ol class="toc">
+      <li><a href="#assign-resource"><span class="secno">5.1</span> <span class="content">Assign Shape Tree to Resource</span></a>
+      <li><a href="#unassign-resource"><span class="secno">5.2</span> <span class="content">Unassign Shape Tree from Resource</span></a>
+      <li><a href="#validate-contained-resource"><span class="secno">5.3</span> <span class="content">Validate Contained Resource</span></a>
+      <li><a href="#validate-resource"><span class="secno">5.4</span> <span class="content">Validate Resource</span></a>
+     </ol>
+    <li>
+     <a href="#descriptions"><span class="secno">6</span> <span class="content">Describing Shape Trees</span></a>
+     <ol class="toc">
+      <li><a href="#description"><span class="secno">6.1</span> <span class="content">Shape Tree Description</span></a>
+      <li><a href="#description-set"><span class="secno">6.2</span> <span class="content">Shape Tree Description Set</span></a>
+     </ol>
+    <li><a href="#definitions"><span class="secno">7</span> <span class="content">Definitions</span></a>
+    <li>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+     <ol class="toc">
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
+      <li><a href="#w3c-conformant-algorithms"><span class="secno"></span> <span class="content">Conformant Algorithms</span></a>
+     </ol>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+     </ol>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="introduction"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#introduction"></a></h2>
+   <p><em>This section is non-normative.</em></p>
+   <p>Realizing the value proposition of the Semantic Web lies in building useful and
+robust applications that can interoperate over linked data. Protocols such as <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a> and <a data-link-type="biblio" href="#biblio-solid" title="Solid Protocol">[Solid]</a> organize linked data graphs into resource hierarchies,
+providing a foundation upon which these robust and interoperable applications
+can be created.</p>
+   <p>Application interoperability depends on applications sharing semantics for
+relationships and data structures.  Existing technologies fulfill portions
+of those dependencies:</p>
+   <ul>
+    <li data-md>
+     <p><a data-link-type="biblio" href="#biblio-rdf" title="RDF 1.1 Concepts and Abstract Syntax">[RDF]</a>'s foundation in unambiguous identifiers provides an infrastructure
+that allows for interoperability, but does not specifically encourage or enforce it.</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#shape" id="ref-for-shape">Shape</a> languages (e.g. <a data-link-type="biblio" href="#biblio-shex" title="Shape Expressions Language 2.1">[ShEx]</a> and <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a>) provide machine-readable,
+enforceable data structure definitions on single resources.</p>
+   </ul>
+   <p>For applications that operate on more complex and interconnected resources, <i><a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree">Shape Trees</a></i> express the layout of those resources and associate them
+with their respective <a data-link-type="dfn" href="#shape" id="ref-for-shape①">shapes</a>.</p>
+   <p><a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①">Shape trees</a> marry <a data-link-type="biblio" href="#biblio-rdf" title="RDF 1.1 Concepts and Abstract Syntax">[RDF]</a> vocabularies, shapes, and resources into
+"little trees" that provide machine to machine interoperability, combining them
+into concepts that humans can easily comprehend, such as medical records, notes,
+notebooks, calendars, and financial records.</p>
+   <p>This allows one to treat a set of related resources as a single grouping, and
+apply that to a range of operations including access control, data organization,
+data validation, and data migration.</p>
+   <p>While <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②">shape trees</a> are intended to adapt to different technology platforms
+that support the notion of <a data-link-type="dfn" href="#container" id="ref-for-container">containers</a> and <a data-link-type="dfn" href="#resource" id="ref-for-resource">resources</a>, examples in this
+specification will reflect usage in an <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a> environment.</p>
+   <p><a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③">Shape trees</a> are defined as an <a data-link-type="dfn">RDF</a> graph structure that expresses a set
+of expected behaviors by agents that work with them. This provides a sort of
+type-safety of resource hierarchies called <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree-consistency">shape tree consistency</dfn>.
+These semantics CAN be implemented by a <a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent">server-side agent</a>, or by a <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent">client-side agent</a> that implements <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④">shape tree</a> operations as primitive
+requests to a server.</p>
+   <p><a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤">Shape tree</a> support by a <a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent①">server-side agent</a> ensures <a data-link-type="dfn" href="#shape-tree-consistency" id="ref-for-shape-tree-consistency">shape tree
+consistency</a> by managing all manipulations of data within a resource hierarchy
+(see <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource">managed resource</a>).</p>
+   <h3 class="heading settled" data-level="1.1" id="shapetree-support-from-proxy-or-client-side-library"><span class="secno">1.1. </span><span class="content">ShapeTree Support From Proxy or Client-side Library</span><a class="self-link" href="#shapetree-support-from-proxy-or-client-side-library"></a></h3>
+   <p>If a server does not support <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥">shape trees</a>, some <a data-link-type="dfn" href="#shape-tree-consistency" id="ref-for-shape-tree-consistency①">shape tree consistency</a> can be achieved by implementing <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦">shape tree</a> support in the client, typically
+in a library than can enforce consistency for any clients using the
+library. Primitive operations by other clients not using the library may leave the
+resource hierarchy in an inconsistent state.</p>
+   <p>For client-side shape tree libraries that operate by intercepting HTTP
+operations, this specification serves as an API for those client
+interactions. (Additionally, if <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑧">shape tree</a> support is later added to the
+server, the client’s execution of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑨">shape tree</a> operations does not change.) In
+the remainder of this document, <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①⓪">shape tree</a> operations are described in terms
+of a <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent①">client-side agent</a> performing operations on a <a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent②">server-side agent</a> with
+support for <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①①">shape trees</a>.</p>
+   <p>A proxy performing <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①②">shape tree</a> operations would be indistinguishable from
+server support except that clients performing primitive operations directly on
+the server (bypassing the proxy) may leave the server in an inconsistent state.</p>
+   <h2 class="heading settled" data-level="2" id="tree"><span class="secno">2. </span><span class="content">Shape Tree</span><a class="self-link" href="#tree"></a></h2>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree">shape tree</dfn> is a machine-readable template describing the
+expected layout of a tree of resources in a <a data-link-type="dfn" href="#container" id="ref-for-container①">container</a>-based <a data-link-type="dfn" href="#ecosystem" id="ref-for-ecosystem">ecosystem</a>.
+A <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①③">shape tree</a> expresses a tree hierarchy by containing
+other <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①④">shape trees</a>. The terms used to express a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①⑤">shape tree</a> are described 
+using an <a data-link-type="biblio" href="#biblio-rdf" title="RDF 1.1 Concepts and Abstract Syntax">[RDF]</a> <a href="shapetrees.ttl">vocabulary</a>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="managed-instance">managed instance</dfn> is a resource assigned to
+and in conformance with one or more <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①⑥">shape trees</a> via 
+a <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager">shape tree manager</a>. The primary resource in a <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance">managed instance</a> is called a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="managed-resource">managed resource</dfn>.</p>
+   <p>Every <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①">managed resource</a> has an associated <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①">shape tree manager</a>.
+A <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②">shape tree manager</a> identifies the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①⑦">shape tree</a> associated
+with a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②">managed resource</a>, and additional information needed to navigate 
+nested hierarchies of managed resources. A resource becomes a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③">managed resource</a> when a <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③">shape tree manager</a> is associated with it 
+through the <a href="#plant-shapetree">§ 4.2 Plant Shape Tree</a> operation.</p>
+   <p>The <code class="vocab">st:expectsType</code> property of a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①⑧">shape tree</a> specifies that the described <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource④">managed resource</a> be one of these three types:</p>
+   <table align="left" class="data">
+    <colgroup>
+    <colgroup>
+    <tbody>
+     <tr>
+      <td><code class="vocab">st:Resource</code>
+      <td>Regular RDF resource that is not a container
+     <tr>
+      <td><code class="vocab">st:Container</code>
+      <td>RDF resource that uses server-managed metadata to
+      enumerate nested resources
+     <tr>
+      <td><code class="vocab">st:NonRDFResource</code>
+      <td>Non-RDF resource such as binaries or images
+   </table>
+   <p>The <code class="vocab">st:shape</code> property specifies that the
+described <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource⑤">managed resource</a> conforms to the stated <a data-link-type="biblio" href="#biblio-shex" title="Shape Expressions Language 2.1">[ShEx]</a> or <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a> shape.</p>
+   <p><a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree①⑨">Shape trees</a> prescribe physical hierarchies and can reference other
+shape trees to form virtual hierarchies.</p>
+   <p>For physical hierarchies, the <code class="vocab">st:contains</code> property asserts that a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource⑥">managed resource</a> is a <a data-link-type="dfn" href="#container" id="ref-for-container②">container</a> that
+explicitly contains another <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource⑦">managed resource</a>.</p>
+   <p>If <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②⓪">shape tree</a> <code>S1</code> <code class="vocab">st:contains</code> <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②①">shape tree</a> <code>S2</code>, <code>S1</code> describes a <a data-link-type="dfn" href="#container" id="ref-for-container③">container</a> that contains another <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource⑧">managed resource</a> described by <code>S2</code>. For example, in <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a>, <code>S1</code> describes 
+an <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a> <a data-link-type="dfn" href="#container" id="ref-for-container④">container</a> which <code class="vocab">ldp:contains</code> nested 
+resources described by <code>S2</code>. <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②②">Shape tree</a> <code>S2</code> and the nested resources 
+associated with it are considered to be <dfn data-dfn-type="dfn" data-noexport id="in-scope">in-scope<a class="self-link" href="#in-scope"></a></dfn> of the containing <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②③">shape tree</a> <code>S1</code>.</p>
+   <figure id="shapetree-physical">
+    <figcaption>Shape tree validation of a physical hierarchy</figcaption>
+    <table align="left" class="data tree">
+     <colgroup>
+      <col>
+      <col>
+     <thead>
+      <tr>
+       <th>Managed Resource
+       <th>Associated Shape Tree
+     <tbody>
+      <tr>
+       <td><code>/project-1/</code>
+       <td><code>ex:ProjectTree</code>
+      <tr>
+       <td><code>-- /milestone-A/</code>
+       <td><code>ex:MilestoneTree</code>
+      <tr>
+       <td><code>---- /task-43/</code>
+       <td><code>ex:TaskTree</code>
+      <tr>
+       <td><code>---- /task-48/</code>
+       <td><code>ex:TaskTree</code>
+      <tr>
+       <td><code>------ /attachment-aa89</code>
+       <td><code>st:NonRDFResourceTree</code>
+      <tr>
+       <td><code>---- /task-61/</code>
+       <td><code>ex:TaskTree</code>
+      <tr>
+       <td><code>---- /issue-22/</code>
+       <td><code>ex:IssueTree</code>
+      <tr>
+       <td><code>------ /attachment-cd12</code>
+       <td><code>st:NonRDFResourceTree</code>
+      <tr>
+       <td><code>------ /attachment-ef55</code>
+       <td><code>st:NonRDFResourceTree</code>
+      <tr>
+       <td><code>---- /issue-31/</code>
+       <td><code>ex:IssueTree</code>
+    </table>
+<pre class="include-code highlight"><c- k>PREFIX</c-> <c- nn>st:</c-> <c- g>&lt;http://www.w3.org/ns/shapetrees#></c->
+<c- k>PREFIX</c-> <c- nn>rdfs:</c-> <c- g>&lt;http://www.w3.org/2000/01/rdf-schema#></c->
+<c- k>PREFIX</c-> <c- nn>ex:</c-> <c- g>&lt;http://www.example.com/ns/ex#></c->
+
+<c- g>&lt;></c-> <c- nn>st</c-><c- p>:</c-><c- f>describedBy</c-> <c- nn>ex</c-><c- p>:</c-><c- f>project-en</c-><c- p>,</c-> <c- nn>ex</c-><c- p>:</c-><c- f>project-es</c-><c- p>,</c-> <c- nn>ex</c-><c- p>:</c-><c- f>project-nl</c-><c- p>,</c-> <c- nn>ex</c-><c- p>:</c-><c- f>project-ko</c-> <c- p>.</c->
+
+<c- g>&lt;#ProjectTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Container</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>contains</c-> <c- g>&lt;#MilestoneTree></c-> <c- p>.</c->
+
+<c- g>&lt;#MilestoneTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Container</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MilestoneShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>contains</c-> <c- g>&lt;#TaskTree></c-><c- p>,</c-> <c- g>&lt;#IssueTree></c-> <c- p>.</c->
+
+<c- g>&lt;#TaskTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Container</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>TaskShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>contains</c-> <c- nn>st</c-><c- p>:</c-><c- f>NonRDFResourceTree</c-> <c- p>.</c->
+
+<c- g>&lt;#IssueTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Container</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>IssueShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>contains</c-> <c- nn>st</c-><c- p>:</c-><c- f>NonRDFResourceTree</c-> <c- p>.</c->
+</pre>
+   </figure>
+   <p>A virtual hierarchy is defined by <a data-link-type="dfn" href="#shape-tree-reference" id="ref-for-shape-tree-reference">shape tree references</a> that link to
+other <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②④">shape trees</a> by the <code class="vocab">st:references</code> property.
+A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree-reference">shape tree reference</dfn> identifies the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②⑤">shape tree</a> to be referenced via <code class="vocab">st:referencesShapeTree</code>, and the <a data-link-type="dfn" href="#shape-path" id="ref-for-shape-path">shape path</a> through 
+which it is linked via either <code class="vocab">st:viaShapePath</code>, or <code class="vocab">st:viaPredicate</code>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-path">shape path</dfn> is a string that defines a traversal
+of a <a data-link-type="dfn" href="#shape" id="ref-for-shape②">shape</a> schema. <a data-link-type="biblio" href="#biblio-shexpath" title="Shape Expressions ShExPath Language">[SHEXPATH]</a></p>
+   <figure id="shapetree-virtual">
+    <figcaption>Shape tree validation of a virtual hierarchy</figcaption>
+    <table align="left" class="data tree">
+     <colgroup>
+      <col>
+      <col>
+     <thead>
+      <tr>
+       <th>Managed Resource
+       <th>Associated Shape Tree
+     <tbody>
+      <tr>
+       <td><code>/project-1</code>
+       <td><code>ex:VirtualProjectTree</code>
+      <tr>
+       <td><code>/milestone-A</code>
+       <td><code>ex:VirtualMilestoneTree</code>
+      <tr>
+       <td><code>/task-43</code>
+       <td><code>ex:VirtualTaskTree</code>
+      <tr>
+       <td><code>/task-48</code>
+       <td><code>ex:VirtualTaskTree</code>
+      <tr>
+       <td><code>/attachment-aa89</code>
+       <td><code>st:NonRDFResourceTree</code>
+      <tr>
+       <td><code>/task-61</code>
+       <td><code>ex:VirtualTaskTree</code>
+      <tr>
+       <td><code>/issue-22</code>
+       <td><code>ex:VirtualIssueTree</code>
+      <tr>
+       <td><code>/attachment-cd12</code>
+       <td><code>st:NonRDFResourceTree</code>
+      <tr>
+       <td><code>/attachment-ef55</code>
+       <td><code>st:NonRDFResourceTree</code>
+      <tr>
+       <td><code>/issue-31</code>
+       <td><code>ex:VirtualIssueTree</code>
+    </table>
+<pre class="include-code highlight"><c- g>&lt;#VirtualProjectTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Resource</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>references</c-> <c- p>[</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>referencesShapeTree</c-> <c- g>&lt;#VirtualMilestoneTree></c-> <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>viaShapePath</c-> <c- s>"@ex:ProjectShape~ex:hasMilestone"</c->
+  <c- p>]</c-> <c- p>.</c->
+
+<c- g>&lt;#VirtualMilestoneTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Resource</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MilestoneShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>references</c-> <c- p>[</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>referencesShapeTree</c-> <c- g>&lt;#VirtualTaskTree></c-> <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>viaPredicate</c-> <c- nn>ex</c-><c- p>:</c-><c- f>hasTask</c->
+  <c- p>]</c-> <c- p>,</c->
+  <c- p>[</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>referencesShapeTree</c-> <c- g>&lt;#VirtualIssueTree></c-> <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>viaPredicate</c-> <c- nn>ex</c-><c- p>:</c-><c- f>hasIssue</c->
+  <c- p>]</c-> <c- p>.</c->
+
+<c- g>&lt;#VirtualTaskTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Resource</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>TaskShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>references</c-> <c- p>[</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>referencesShapeTree</c-> <c- nn>st</c-><c- p>:</c-><c- f>NonRDFResourceTree</c-> <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>viaShapePath</c-> <c- s>"@ex:TaskShape~ex:hasAttachment"</c->
+  <c- p>]</c-> <c- p>.</c->
+
+<c- g>&lt;#VirtualIssueTree></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- nn>st</c-><c- p>:</c-><c- f>Container</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>IssueShape</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>references</c-> <c- p>[</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>referencesShapeTree</c-> <c- nn>st</c-><c- p>:</c-><c- f>NonRDFResourceTree</c-> <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>viaShapePath</c-> <c- s>"@ex:IssueShape~ex:hasAttachment"</c->
+  <c- p>]</c-> <c- p>.</c->
+</pre>
+   </figure>
+   <p>Let <code>ST</code> be a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②⑥">shape tree</a>.
+Let <code>STI</code> be a corresponding <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance①">managed instance</a>.</p>
+   <ul>
+    <li data-md>
+     <p>An { <code>ST</code> <code class="vocab">st:expectsType</code> <code>T</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple">triple</a> identifies
+the resource type <code>T</code> of a  corresponding <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource⑨">managed resource</a> <code>R</code> in <code>STI</code> where <code>T</code> <em class="rfc2119">MUST</em> be one of <code class="vocab">st:Resource</code>, <code class="vocab">st:Container</code>, or <code class="vocab">st:NonRDFResource</code>.</p>
+    <li data-md>
+     <p>An { <code>ST</code> <code class="vocab">rdfs:label</code> <code>L</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple①">triple</a> indicates that there is at most one corresponding <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①⓪">managed resource</a> <code>R</code> in <code>STI</code> and it has the name <code>L</code>. <code>L</code> is a <dfn data-dfn-type="dfn" data-noexport id="static-resource">static resource<a class="self-link" href="#static-resource"></a></dfn>.</p>
+    <li data-md>
+     <p>An { <code>ST</code> <code class="vocab">st:shape</code> <code>SH</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple②">triple</a> indicates that <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①①">managed resource</a> <code>R</code> has
+at most one node which conforms to <a data-link-type="dfn" href="#shape" id="ref-for-shape③">shape</a> <code>SH</code>.</p>
+    <li data-md>
+     <p>An { <code>ST</code> <code class="vocab">st:contains</code> <code>ST2</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple③">triple</a> identifies a nested <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②⑦">shape tree</a> <code>ST2</code>.</p>
+    <li data-md>
+     <p>An { <code>ST</code> <code class="vocab">st:references</code> <code>STR</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple④">triple</a> indicates that the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②⑧">shape tree</a> identified in <a data-link-type="dfn" href="#shape-tree-reference" id="ref-for-shape-tree-reference①">shape tree reference</a> <code>STR</code>, is referenced through the
+instance data of <code>STI</code>.</p>
+     <ul>
+      <li data-md>
+       <p>An { <code>STR</code> <code class="vocab">st:referencesShapeTree</code> <code>ST3</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple⑤">triple</a> indicates a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree②⑨">shape tree</a> referenced through the instance data of <code>STI</code></p>
+      <li data-md>
+       <p>An { <code>STR</code> <code class="vocab">st:viaShapePath</code> <code>PATH</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple⑥">triple</a> identifies the <a data-link-type="dfn" href="#shape-path" id="ref-for-shape-path①">shape path</a> through which a <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance②">managed instance</a> of <code>ST3</code> can be found via the instance data of <code>STI</code></p>
+      <li data-md>
+       <p>An { <code>STR</code> <code class="vocab">st:viaPredicate</code> <code>PRED</code> } <a data-link-type="dfn" href="#triple" id="ref-for-triple⑦">triple</a> identifies the RDF predicate through which a <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance③">managed instance</a> of <code>ST3</code> can be found via the instance data of <code>STI</code></p>
+     </ul>
+   </ul>
+   <h3 class="heading settled" data-level="2.1" id="st-schema"><span class="secno">2.1. </span><span class="content">Shape Tree Schema</span><a class="self-link" href="#st-schema"></a></h3>
+   <figure id="shapetree-shex">
+    <figcaption>ShEx Schema for a Shape Tree</figcaption>
+<pre class="include-code highlight"><c- g>&lt;#ShapeTreeShape></c-> <c- p>{</c->
+  <c- b>a</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>ShapeTree</c-><c- p>]</c-> <c- p>;</c->
+  <c- p>(</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>Container</c-><c- p>]</c-> <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>contains</c-> @<c- g>&lt;#LocalOrExternalShape></c-> * <c- p>;</c->
+    |
+    <c- nn>st</c-><c- p>:</c-><c- f>expectsType</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>Resource</c-> <c- nn>st</c-><c- p>:</c-><c- f>NonRDFResource</c-><c- p>]</c->
+  <c- p>)</c-> <c- p>;</c->
+  <c- nn>rdfs</c-><c- p>:</c-><c- f>label</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-> ? <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>references</c-> @<c- g>&lt;#ReferenceShape></c-> * <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> IRI ?
+<c- p>}</c->
+
+<c- g>&lt;#LocalOrExternalShape></c->
+  @<c- g>&lt;#ShapeTreeShape></c-> OR
+  <c- p>((</c->@<c- g>&lt;#ReservedShapeTree></c-> OR IRI<c- p>)</c-> AND <c- p>{})</c->
+
+<c- g>&lt;#ReservedShapeTree></c-> <c- p>[</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>ResourceTree</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>ContainerTree</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>NonRDFResourceTree</c->
+<c- p>]</c->
+</pre>
+   </figure>
+   <h2 class="heading settled" data-level="3" id="assigning"><span class="secno">3. </span><span class="content">Assigning Shape Trees</span><a class="self-link" href="#assigning"></a></h2>
+   <h3 class="heading settled" data-level="3.1" id="manager"><span class="secno">3.1. </span><span class="content">Shape Tree Manager</span><a class="self-link" href="#manager"></a></h3>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree-manager">shape tree manager</dfn> associates a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①②">managed resource</a> with
+one or more <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③⓪">shape trees</a>. No more than one <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager④">shape tree manager</a> may be
+associated with a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①③">managed resource</a>.</p>
+   <p>A <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager⑤">shape tree manager</a> includes one or more <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment">shape tree assignments</a>.</p>
+   <p>The server MUST advertise the URI of the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager⑥">shape tree manager</a> for a
+given resource by responding to HTTP requests of that resource with an
+included <code>HTTP Link</code> header with a <code>rel</code> value of <code>http://www.w3.org/ns/shapetrees#managedBy</code> and the manager resource
+as the link target.</p>
+   <p>Conversely, the server MUST advertise the URI of the resource managed
+by a <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager⑦">shape tree manager</a> by responding to HTTP requests of the
+manager resource with an included <code>HTTP Link</code> header with a <code>rel</code> value of <code>http://www.w3.org/ns/shapetrees#manages</code> and the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①④">managed resource</a> as the link target.</p>
+   <figure id="shapetree-manager-properties">
+    <figcaption>Shape Tree Manager properties</figcaption>
+    <table align="left" class="data">
+     <colgroup>
+     <colgroup>
+     <thead>
+      <tr>
+       <th>Property
+       <th>Description
+     <tbody>
+      <tr>
+       <td><code class="vocab">st:hasAssignment</code>
+       <td>Links a <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①">shape tree assignment</a> of the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager⑧">shape tree manager</a>
+    </table>
+   </figure>
+   <h3 class="heading settled" data-level="3.2" id="assignment"><span class="secno">3.2. </span><span class="content">Shape Tree Assignment</span><a class="self-link" href="#assignment"></a></h3>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree-assignment">shape tree assignment</dfn> is used to associate a given <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③①">shape tree</a> with a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①⑤">managed resource</a>.</p>
+   <p><a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②">Shape tree assignments</a> identify key contextual points in a physical
+hierarchy. A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="root-shape-tree-assignment">root shape tree assignment</dfn> is set by the <a href="#plant-shapetree">Plant Operation</a>, and any subsequent assignment applied
+within that managed hierarchy reference it via <code>st:hasRootAssignment</code>.</p>
+   <p>If there is more than one <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment③">shape tree assignment</a> in a <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager⑨">shape tree manager</a>,
+they must all apply to the same <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①⑥">managed resource</a> associated with the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①⓪">shape tree manager</a>.</p>
+   <figure id="shapetree-assignment-properties">
+    <figcaption>Shape Tree Assignment properties</figcaption>
+    <table align="left" class="data">
+     <colgroup>
+     <colgroup>
+     <thead>
+      <tr>
+       <th>Property
+       <th>Description
+     <tbody>
+      <tr>
+       <td><code class="vocab">st:assigns</code>
+       <td>Identifies the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③②">shape tree</a> to be associated with 
+        the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①⑦">managed resource</a>
+      <tr>
+       <td><code class="vocab">st:manages</code>
+       <td>Identifies the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①⑧">managed resource</a> associated with the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment④">shape tree assignment</a>
+      <tr>
+       <td><code class="vocab">st:hasRootAssignment</code>
+       <td>Identifies the <a data-link-type="dfn" href="#root-shape-tree-assignment" id="ref-for-root-shape-tree-assignment">root shape tree assignment</a>
+      <tr>
+       <td><code class="vocab">st:focusNode</code>
+       <td>Identifies the focus node for <a data-link-type="dfn" href="#shape" id="ref-for-shape④">shape</a> validation 
+        in the associated <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource①⑨">managed resource</a>, and is only valid when the 
+        corresponding <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③③">shape tree</a> includes <code class="vocab">st:shape</code>
+      <tr>
+       <td><code class="vocab">st:shape</code>
+       <td>Identifies the <a data-link-type="dfn" href="#shape" id="ref-for-shape⑤">shape</a> to which <code class="vocab">st:focusNode</code> must conform, and must be equivalent to <code class="vocab">st:shape</code> in the corresponding <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③④">shape tree</a>
+    </table>
+   </figure>
+   <p>A <a data-link-type="dfn">root shape tree</a>, and its corresponding <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②⓪">managed resource</a> can
+be planted within an existing managed hierarchy, alongside or within other <a data-link-type="dfn">root shape trees</a> and <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②①">managed resources</a>.</p>
+   <p><a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment⑤">Shape tree assignments</a> in a given <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①①">shape tree manager</a> may have different
+focus nodes.</p>
+   <figure id="shapetree-navigation">
+    <figcaption>Navigating a physical shape tree hierarchy</figcaption>
+    <table align="left" class="data tree">
+     <colgroup>
+     <colgroup>
+      <col>
+      <col>
+      <col>
+     <thead>
+      <tr>
+       <th>Managed Resource
+       <th>Shape Tree
+       <th>Root Shape Tree
+       <th>Root Managed Resource
+     <tbody>
+      <tr>
+       <td><code>/data/</code>
+       <td><code>ex:DataTree</code>
+       <td><code>ex:DataTree</code>
+       <td><code>/data/</code>
+      <tr>
+       <td><code>-- /projects/</code>
+       <td><code>ex:DataCollectionTree</code><br> <code>ex:ProjectCollectionTree</code>
+       <td><code>ex:DataTree</code><br> <code>ex:ProjectCollectionTree</code>
+       <td><code>/data/</code><br> <code>/data/projects/</code>
+      <tr>
+       <td><code>---- /project-1/</code>
+       <td><code>ex:ProjectTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>------ /milestone-A/</code>
+       <td><code>ex:MilestoneTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>-------- /task-43/</code>
+       <td><code>ex:TaskTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>-------- /task-48/</code>
+       <td><code>ex:TaskTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>---------- /attachment-aa89</code>
+       <td><code>ex:AttachmentTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>-------- /task-61/</code>
+       <td><code>ex:TaskTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>-------- /issue-22/</code>
+       <td><code>ex:IssueTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>---------- /attachment-cd12</code>
+       <td><code>ex:AttachmentTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>---------- /attachment-ef55</code>
+       <td><code>ex:AttachmentTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+      <tr>
+       <td><code>-------- /issue-31/</code>
+       <td><code>ex:IssueTree</code>
+       <td><code>ex:ProjectCollectionTree</code>
+       <td><code>/data/projects/</code>
+    </table>
+   </figure>
+   <figure id="manager-multiple-assignments">
+    <figcaption><a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①②">Shape Tree Manager</a> for /data/projects/ with multiple <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment⑥">shape tree assignments</a> in a nested physical hierarchy</figcaption>
+<pre class="include-code highlight"><c- k>PREFIX</c-> <c- nn>st:</c-> <c- g>&lt;http://www.w3.org/ns/shapetrees#></c->
+<c- k>PREFIX</c-> <c- nn>rdfs:</c-> <c- g>&lt;http://www.w3.org/2000/01/rdf-schema#></c->
+<c- k>PREFIX</c-> <c- nn>ex:</c-> <c- g>&lt;http://www.example/ns/ex#></c->
+
+<c- g>&lt;></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>Manager</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasAssignment</c->
+    <c- g>&lt;#assignment1></c-><c- p>,</c->
+    <c- g>&lt;#assignment2></c-> <c- p>.</c->
+
+<c- g>&lt;#assignment1></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> <c- nn>ex</c-><c- p>:</c-><c- f>DataCollectionTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> <c- g>&lt;https://storage.example/data/projects/></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> <c- g>&lt;https://storage.example/data/.shapetree#assignment1></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> <c- g>&lt;https://storage.example/data/projects/#collection></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>DataCollectionShape</c-> <c- p>.</c->
+
+<c- g>&lt;#assignment2></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectCollectionTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> <c- g>&lt;https://storage.example/data/projects/></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> <c- g>&lt;https://storage.example/data/projects/.shapetree#assignment2></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> <c- g>&lt;https://storage.example/data/projects/#collection></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectCollectionShape</c-> <c- p>.</c->
+</pre>
+   </figure>
+   <figure id="manager-single">
+    <figcaption><a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①③">Shape Tree Manager</a> for 
+    /data/projects/project-1/milestone-A/task-48 with a single <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment⑦">shape tree assignment</a> in a nested physical hierarchy</figcaption>
+<pre class="include-code highlight"><c- k>PREFIX</c-> <c- nn>st:</c-> <c- g>&lt;http://www.w3.org/ns/shapetrees#></c->
+<c- k>PREFIX</c-> <c- nn>rdfs:</c-> <c- g>&lt;http://www.w3.org/2000/01/rdf-schema#></c->
+<c- k>PREFIX</c-> <c- nn>ex:</c-> <c- g>&lt;http://www.example/ns/ex#></c->
+
+<c- g>&lt;></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>Manager</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasAssignment</c-> <c- g>&lt;#assignment1></c-> <c- p>.</c->
+
+<c- g>&lt;#assignment1></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> <c- nn>ex</c-><c- p>:</c-><c- f>TaskTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> <c- g>&lt;https://storage.example/data/projects/project-1/milestone-A/task-48></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> <c- g>&lt;https://storage.example/data/projects/.shapetree#assignment2></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> <c- g>&lt;https://storage.example/data/projects/project-1/milestone-A/task-48#task></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectCollectionShape</c-> <c- p>.</c->
+</pre>
+   </figure>
+   <h3 class="heading settled" data-level="3.3" id="st-manager-schema"><span class="secno">3.3. </span><span class="content">Shape Tree Manager Schema</span><a class="self-link" href="#st-manager-schema"></a></h3>
+   <figure id="shapetree-manager-shex">
+    <figcaption>ShEx Schema for a Shape Tree Manager</figcaption>
+<pre class="include-code highlight"><c- g>&lt;#ManagerShape></c-> <c- p>{</c->
+  <c- b>a</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>Manager</c-><c- p>]</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasAssignment</c-> @<c- g>&lt;#AssignmentShape></c-> +
+<c- p>}</c->
+
+<c- g>&lt;#AssignmentShape></c-> <c- p>{</c->
+  <c- b>a</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>Assignment</c-><c- p>]</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> IRI <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> IRI <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> IRI <c- p>;</c->
+  <c- p>(</c-> <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> IRI <c- p>;</c->
+    <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> IRI <c- p>)</c-> ?
+<c- p>}</c->
+</pre>
+   </figure>
+   <h2 class="heading settled" data-level="4" id="operations"><span class="secno">4. </span><span class="content">Shape Tree Operations</span><a class="self-link" href="#operations"></a></h2>
+   <p>Working with <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③⑤">shape trees</a> entails using several higher-level operations —<wbr>each of which may represent one or more HTTP requests and/or pieces of
+processing logic.</p>
+   <p>In regular use, a <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent②">client-side agent</a> manipulates resources on a <a data-link-type="dfn">resource server</a> running a <a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent③">server-side agent</a>. That <a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent④">server-side agent</a> applies logic for <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③⑥">shape tree</a> validation and navigation where applicable
+when processing requests from <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent③">client-side agents</a>.</p>
+   <p>The key operations used to manage <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③⑦">shape trees</a> are:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#discover">Discover Shape Tree</a> - determine the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③⑧">shape tree</a> linked to some <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②②">managed resource</a>.</p>
+    <li data-md>
+     <p><a href="#plant-shapetree">Plant Shape Tree</a> - declare that a resource will henceforth be managed by the provided <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree③⑨">shape tree</a>.</p>
+    <li data-md>
+     <p><a href="#unplant-shapetree">Unplant Shape Tree</a> - assert that a managed resource should no longer be managed by the provided <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④⓪">shape tree</a>.</p>
+    <li data-md>
+     <p><a href="#create-managed-instance">Create Managed Instance</a> - add a resource to a managed resource hierarchy.</p>
+    <li data-md>
+     <p><a href="#update-managed-instance">Update Managed Instance</a> - modify a resource in a managed resource hierarchy.</p>
+    <li data-md>
+     <p><a href="#delete-managed-instance">Delete Managed Instance</a> - remove a resource in a managed resource hierarchy.</p>
+   </ul>
+   <p>These operations make use of reusable, internal algorithms defined in <a href="#algorithms">Shape Tree Algorithms</a>.</p>
+   <p><a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④①">Shape tree</a> logic can be applied by <a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent⑤">server-side agents</a> implementing different protocols such as <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a> or <a data-link-type="biblio" href="#biblio-solid" title="Solid Protocol">[Solid]</a>. The operations
+defined herein defer to the implementing protocol as to the appropriate
+status code and composition of HTTP responses.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Server-side processing of changes to <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①④">shape tree managers</a> can support the addition and removal of multiple <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment⑧">shape tree assignments</a> at once. For simplicity, this specification provides discreet client-side
+operations to plant or unplant one shape tree at a time. However, it
+would not be inappropriate to provide client implementations that
+support requests to plant and unplant multiple shape trees for a 
+given <a data-link-type="dfn" href="#resource" id="ref-for-resource①">resource</a> in a single request.</p>
+   <h3 class="heading settled" data-level="4.1" id="discover"><span class="secno">4.1. </span><span class="content">Discover Shape Tree</span><a class="self-link" href="#discover"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2">
+        This operation is used by a <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent④">client-side agent</a> to discover  
+        any <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④②">shape trees</a> associated with a given <a data-link-type="dfn" href="#resource" id="ref-for-resource②">resource</a>. 
+       <p>If <code>URI</code> is a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②③">managed resource</a>, the associated <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①⑤">Shape Tree Manager</a> will be returned.</p>
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>RESOURCEURI</code>
+      <td>The URI of the resource to discover shape trees for
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>MANAGER</code>
+      <td><a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①⑥">Shape tree manager</a> associated with the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②④">managed resource</a>
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Perform an HTTP HEAD or GET on the provided <code>RESOURCEURI</code>.</p>
+    </ol>
+<pre class="highlight">HEAD https://storage.example/data/projects/
+</pre>
+<pre class="highlight"><c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c-> <c- m>200</c-> <c- ne>OK</c->
+<c- e>Link</c-><c- o>:</c-> <c- l>&lt;https://storage.example/meta/c560224b>; rel="http://www.w3.org/ns/shapetrees#managedBy"</c->
+<c- e>Link</c-><c- o>:</c-> <c- l>&lt;http://www.w3.org/ns/ldp#Container>; rel="type"</c->
+...other <c- l>HTTP response headers omitted...</c->
+</pre>
+    <ol start="2">
+     <li data-md>
+      <p>Let <code>MANAGERURI</code> be the URI of a <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①⑦">shape tree manager</a> associated with <code>RESOURCEURI</code> with a Link relation type of <code>http://www.w3.org/ns/shapetrees#managedBy</code>.</p>
+     <li data-md>
+      <p>If <code>MANAGERURI</code> is missing, the resource at <code>RESOURCEURI</code> is not a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②⑤">managed resource</a>, and no <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①⑧">shape tree manager</a> will be returned.</p>
+     <li data-md>
+      <p>Perform an HTTP GET on <code>MANAGERURI</code></p>
+    </ol>
+<pre class="highlight">GET https://storage.example/data/projects/.shapetree
+</pre>
+<pre class="highlight"><c- p>...</c->HTTP response headers omitted<c- p>...</c->
+<c- k>PREFIX</c-> <c- nn>st:</c-> <c- g>&lt;http://www.w3.org/ns/shapetrees#></c-> 
+<c- k>PREFIX</c-> <c- nn>rdfs:</c-> <c- g>&lt;http://www.w3.org/2000/01/rdf-schema#></c->  
+<c- k>PREFIX</c-> <c- nn>ex:</c-> <c- g>&lt;http://www.example/ns/ex#></c->
+
+<c- g>&lt;></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>Manager</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasAssignment</c-> <c- g>&lt;#assignment1></c-> <c- p>.</c->
+    
+<c- g>&lt;#assignment1></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> <c- nn>ex</c-><c- p>:</c-><c- f>DataCollectionTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> <c- g>&lt;https://storage.example/data/projects/></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> <c- g>&lt;https://storage.example/data/.shapetree#assignment1></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> <c- g>&lt;https://storage.example/data/projects/#collection></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>DataCollectionShape</c-> <c- p>.</c->
+</pre>
+    <ol start="5">
+     <li data-md>
+      <p>If a corresponding resource at <code>MANAGERURI</code> is not found, it <em class="rfc2119">MUST</em> be considered
+an <a data-link-type="dfn" href="#unmanaged-resource" id="ref-for-unmanaged-resource">unmanaged resource</a>.</p>
+    </ol>
+<pre class="highlight">GET https://storage.example/data/projects/.shapetree
+</pre>
+<pre class="highlight"><c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c-> <c- m>404</c-> <c- ne>Not Found</c->
+</pre>
+    <ol start="5">
+     <li data-md>
+      <p>If <code>MANAGERURI</code> contains a valid <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager①⑨">shape tree manager</a>,
+the resource at <code>RESOURCEURI</code> <em class="rfc2119">MUST</em> be considered a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②⑥">managed resource</a>.</p>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="4.2" id="plant-shapetree"><span class="secno">4.2. </span><span class="content">Plant Shape Tree</span><a class="self-link" href="#plant-shapetree"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2">
+        This operation marks an existing <a data-link-type="dfn" href="#resource" id="ref-for-resource③">resource</a> as managed by 
+        one or more shape trees, by creating or updating an associated <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②⓪">shape tree manager</a>. 
+       <p>If the <a data-link-type="dfn" href="#resource" id="ref-for-resource④">resource</a> is already managed, the associated <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②①">shape tree manager</a> will be updated with another <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment⑨">shape tree assignment</a> for the 
+        planted <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④③">shape tree</a>.</p>
+       <p>If the <a data-link-type="dfn" href="#resource" id="ref-for-resource⑤">resource</a> is a container that already contains existing
+        resources, this operation will perform a depth first traversal through 
+        the containment hierarchy, validating and assigning as it works its 
+        way back up to the target resource of this operation.</p>
+   </table>
+   <h4 class="heading settled" data-level="4.2.1" id="plant-client"><span class="secno">4.2.1. </span><span class="content"><a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent⑤">Client-side</a></span><a class="self-link" href="#plant-client"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>TR</code>
+      <td>The URI of the resource to plant on
+     <tr>
+      <td><code>TST</code>
+      <td>A URI representing the shape tree to plant for <code>TR</code>
+     <tr>
+      <td><code>FN</code>
+      <td>An <em class="rfc2119">OPTIONAL</em> URI representing the 
+      subject within <code>TR</code> used as the focus node for shape validation
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p><a href="#discover">Discover</a> if <code>TR</code> is a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②⑦">managed resource</a>.</p>
+      <ul>
+       <li data-md>
+        <p>Let <code>MANAGERURI</code> be the URI of the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②②">Shape Tree Manager</a> associated
+with <code>TR</code>.</p>
+      </ul>
+     <li data-md>
+      <p>Perform an HTTP <code>PUT</code> or <code>PATCH</code> on <code>MANAGERURI</code> to create or update the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②③">Shape Tree Manager</a> for <code>TR</code></p>
+      <ul>
+       <li data-md>
+        <p>Add a new <code>st:Assignment ASN</code></p>
+       <li data-md>
+        <p>Let <code>ASN assigns</code> be <code>TST</code></p>
+       <li data-md>
+        <p>Let <code>ASN manages</code> be <code>TR</code></p>
+       <li data-md>
+        <p>Let <code>ASN hasRootAssignment</code> be <code>ASN</code></p>
+       <li data-md>
+        <p>If <code>TST</code> has an <code>st:shape</code></p>
+        <ul>
+         <li data-md>
+          <p>Let <code>ASN st:shape</code> be the object value of <code>TST st:shape</code></p>
+         <li data-md>
+          <p>Let <code>ASN st:focusNode</code> be <code>FN</code></p>
+        </ul>
+      </ul>
+    </ol>
+   </div>
+<pre class="highlight">PUT https://storage.example/data/projects/.shapetree
+</pre>
+<pre class="highlight"><c- k>PREFIX</c-> <c- nn>st:</c-> <c- g>&lt;http://www.w3.org/ns/shapetrees#></c-> 
+<c- k>PREFIX</c-> <c- nn>rdfs:</c-> <c- g>&lt;http://www.w3.org/2000/01/rdf-schema#></c->  
+<c- k>PREFIX</c-> <c- nn>ex:</c-> <c- g>&lt;http://www.example/ns/ex#></c->
+
+<c- g>&lt;></c->
+  <c- b>a</c-> <c- nn>st</c-><c- p>:</c-><c- f>Manager</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasAssignment</c-> <c- g>&lt;#assignment1></c-><c- p>,</c-> <c- g>&lt;#assignment2></c-> <c- p>.</c->
+  
+<c- g>&lt;#assignment1></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> <c- nn>ex</c-><c- p>:</c-><c- f>DataCollectionTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> <c- g>&lt;https://storage.example/data/projects/></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> <c- g>&lt;https://storage.example/data/.shapetree#assignment1></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> <c- g>&lt;https://storage.example/data/projects/#collection></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>DataCollectionShape</c-> <c- p>.</c->
+
+<c- g>&lt;#assignment2></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>assigns</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectCollectionTree</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>manages</c-> <c- g>&lt;https://storage.example/data/projects/></c->
+  <c- nn>st</c-><c- p>:</c-><c- f>hasRootAssignment</c-> <c- g>&lt;https://storage.example/data/projects/.shapetree#assignment2></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>focusNode</c-> <c- g>&lt;https://storage.example/data/projects/#collection></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>shape</c-> <c- nn>ex</c-><c- p>:</c-><c- f>ProjectCollectionShape</c-> <c- p>.</c->
+</pre>
+<pre class="highlight"><c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c-> <c- m>204</c-> <c- ne>No Content</c->
+</pre>
+   <h4 class="heading settled" data-level="4.2.2" id="plant-server"><span class="secno">4.2.2. </span><span class="content"><a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent⑥">Server-side</a></span><a class="self-link" href="#plant-server"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>REQ</code>
+      <td>An HTTP <code>PUT</code> or <code>PATCH</code> request on <code>MANAGERURI</code> from the <a href="#plant-client">previous sequence</a>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <p class="note" role="note"><span class="marker">Note:</span> The following sequence is invoked by the server in response
+to the <code>HTTP PUT</code> or <code>HTTP PATCH</code> on <code>MANAGERURI</code> by the <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent⑥">client-side agent</a> in the <a href="#plant-client">previous sequence</a>.</p>
+    <ol>
+     <li data-md>
+      <p>Let <code>MANAGER</code> be the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②④">shape tree manager</a> target of <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>R</code> be the primary resource directly associated with <code>MANAGER</code></p>
+     <li data-md>
+      <p>Let <code>UMR</code> be the updated <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②⑤">shape tree manager</a> in the body of <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>EMR</code> be the existing <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②⑥">shape tree manager</a> resource on the server</p>
+     <li data-md>
+      <p>Let <code>ADDED</code> be the set of <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①⓪">shape tree assignments</a> that have been added to <code>EMR</code> by <code>UMR</code></p>
+     <li data-md>
+      <p>Let <code>REMOVED</code> be the set of <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①①">shape tree assignments</a> that have been removed from <code>EMR</code> by <code>UMR</code></p>
+     <li data-md>
+      <p>If <code>REMOVED</code> is not empty, the server must <a href="#unplant-server">unplant</a> the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①②">shape tree assignments</a> that have been removed.</p>
+     <li data-md>
+      <p>For each <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①③">shape tree assignment</a> <code>ASN</code> in <code>ADDED</code></p>
+      <ol>
+       <li data-md>
+        <p>Call <a href="#assign-resource">§ 5.1 Assign Shape Tree to Resource</a> with inputs: <code>UMR</code>, <code>ASN</code>, <code>ASN</code>, <code>R</code>, <code>NULL</code></p>
+      </ol>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="4.3" id="unplant-shapetree"><span class="secno">4.3. </span><span class="content">Unplant Shape Tree</span><a class="self-link" href="#unplant-shapetree"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2">
+        This operation unassigns a planted <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④④">shape tree</a> from a given <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②⑧">managed resource</a>. If the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource②⑨">managed resource</a> is a <a data-link-type="dfn" href="#managed-container" id="ref-for-managed-container">managed container</a>, it will also
+        unassign contained resources. 
+       <p>This operation will fail immediately if the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④⑤">shape tree</a> to unplant
+        is not the root <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①④">shape tree assignment</a>.</p>
+   </table>
+   <h4 class="heading settled" data-level="4.3.1" id="unplant-client"><span class="secno">4.3.1. </span><span class="content"><a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent⑦">Client-side</a></span><a class="self-link" href="#unplant-client"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>TR</code>
+      <td>The URI of the target <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③⓪">managed resource</a> to unplant
+     <tr>
+      <td><code>TST</code>
+      <td>A URI representing the target shape tree to unplant for <code>TR</code>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td> A standard HTTP response 
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Let <code>MANAGER</code> be the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②⑦">Shape Tree Manager</a> returned from <a href="#discover">§ 4.1 Discover Shape Tree</a> with inputs: <code>TR</code></p>
+     <li data-md>
+      <p>Return failure if <code>MANAGER</code> has zero or more than one <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①⑤">shape tree assignments</a> where <code>st:assigns</code> is <code>TST</code></p>
+     <li data-md>
+      <p>If <code>MANAGER</code> has a single <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①⑥">shape tree assignment</a></p>
+      <ol>
+       <li data-md>
+        <p>Perform an HTTP <code>DELETE</code> on <code>MANAGER</code> to fully remove the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②⑧">Shape Tree Manager</a> for <code>TR</code></p>
+      </ol>
+    </ol>
+<pre class="highlight">DELETE https://storage.example/data/projects/.shapetree
+</pre>
+<pre class="highlight"><c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c-> <c- m>204</c-> <c- ne>No Content</c->
+</pre>
+    <ol>
+     <li data-md>
+      <p>If <code>MANAGER</code> has more than one <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①⑦">shape tree assignment</a></p>
+      <ol>
+       <li data-md>
+        <p>Let <code>ASN</code> be the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①⑧">shape tree assignment</a> where <code>st:assigns</code> is <code>TST</code></p>
+       <li data-md>
+        <p>Perform an HTTP <code>PUT</code> or <code>PATCH</code> on <code>MANAGER</code> to remove <code>ASN</code></p>
+      </ol>
+    </ol>
+   </div>
+   <h4 class="heading settled" data-level="4.3.2" id="unplant-server"><span class="secno">4.3.2. </span><span class="content"><a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent⑦">Server-side</a></span><a class="self-link" href="#unplant-server"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>REQ</code>
+      <td> An HTTP PUT, PATCH, or DELETE request on the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager②⑨">shape tree manager</a> <code>MANAGER</code> from the <a href="#unplant-client">previous sequence</a>. 
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td> A standard HTTP response 
+   </table>
+   <div class="opdetails">
+    <p class="note" role="note"><span class="marker">Note:</span> The following sequence is invoked by the server in response
+to the <code>HTTP PUT</code>, <code>HTTP PATCH</code>, or <code>HTTP DELETE</code> on <code>MANAGERURI</code> by the <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent⑧">client-side agent</a> in the <a href="#unplant-client">previous sequence</a>.</p>
+    <ol>
+     <li data-md>
+      <p>Let <code>MANAGER</code> be the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③⓪">shape tree manager</a> target of <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>R</code> be the primary resource directly associated with <code>MANAGER</code></p>
+     <li data-md>
+      <p>Let <code>UMR</code> be the updated <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③①">shape tree manager</a> in the body of <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>EMR</code> be the existing <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③②">shape tree manager</a> resource on the server</p>
+     <li data-md>
+      <p>Let <code>ADDED</code> be the set of <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment①⑨">shape tree assignments</a> that have been added to <code>EMR</code> by <code>UMR</code></p>
+     <li data-md>
+      <p>Let <code>REMOVED</code> be the set of <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②⓪">shape tree assignments</a> that have been removed from <code>EMR</code> by <code>UMR</code></p>
+     <li data-md>
+      <p>For each <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②①">shape tree assignment</a> <code>ASN</code> in <code>REMOVED</code></p>
+     <li data-md>
+      <p>Call <a href="#unassign-resource">§ 5.2 Unassign Shape Tree from Resource</a> with inputs: <code>ASN</code>, <code>R</code></p>
+     <li data-md>
+      <p>If <code>ADDED</code> is not empty, the server must <a href="#plant-server">plant</a> the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②②">shape tree assignments</a> that have been added.</p>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="4.4" id="create-managed-instance"><span class="secno">4.4. </span><span class="content">Create Managed Instance</span><a class="self-link" href="#create-managed-instance"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2">
+        This operation creates a <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance④">managed instance</a> within a <a data-link-type="dfn" href="#managed-container" id="ref-for-managed-container①">managed container</a>. 
+       <p class="note" role="note"><span class="marker">Note:</span> This operation can be performed as
+        a standard HTTP operation with no knowledge of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④⑥">shape trees</a>.
+        However, server-side processing is more efficient when
+        the target shape tree and focus node for validation can be provided
+        by the <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent⑨">client-side agent</a>.</p>
+   </table>
+   <h4 class="heading settled" data-level="4.4.1" id="create-instance-client"><span class="secno">4.4.1. </span><span class="content"><a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent①⓪">Client-side</a></span><a class="self-link" href="#create-instance-client"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>TR</code>
+      <td>The URI of the target <a data-link-type="dfn" href="#resource" id="ref-for-resource⑥">resource</a>
+     <tr>
+      <td><code>TST</code>
+      <td>An <em class="rfc2119">OPTIONAL</em> URI representing the target shape 
+      tree associated with the created resource
+     <tr>
+      <td><code>FN</code>
+      <td>An <em class="rfc2119">OPTIONAL</em> URI representing the target 
+      subject within <code>TR</code> used for shape validation
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Perform an HTTP <code>POST</code>, <code>PUT</code>, or <code>PATCH</code> in or on <code>TR</code> to create the <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance⑤">managed instance</a> including:</p>
+      <ul>
+       <li data-md>
+        <p>An HTTP <code>Link</code> header with the relation of <code>http://www.w3.org/ns/shapetrees#TargetShapeTree</code> if <code>SHAPETREEURI</code> is provided</p>
+       <li data-md>
+        <p>An HTTP <code>Link</code> header with the relation of <code>http://www.w3.org/ns/shapetrees#FocusNode</code> if <code>FNURI</code> is provided</p>
+      </ul>
+    </ol>
+   </div>
+   <h4 class="heading settled" data-level="4.4.2" id="create-instance-server"><span class="secno">4.4.2. </span><span class="content"><a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent⑧">Server-side</a></span><a class="self-link" href="#create-instance-server"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>REQ</code>
+      <td>A HTTP <code>POST</code>, <code>PUT</code>, or <code>PATCH</code> request in or on the <a data-link-type="dfn">target resurce</a> <code>TR</code> from the <a href="#create-instance-client">previous sequence</a>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Let <code>TR</code> be the proposed resource from <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>TST</code> be the value of an optionally provided HTTP <code>Link</code> header with
+the relation of <code>http://www.w3.org/ns/shapetrees#TargetShapeTree</code></p>
+     <li data-md>
+      <p>Let <code>FN</code> be the value of an optionally provided HTTP <code>Link</code> header with
+the relation of <code>http://www.w3.org/ns/shapetrees#FocusNode</code></p>
+     <li data-md>
+      <p>Let <code>PC</code> be the parent <a data-link-type="dfn" href="#container" id="ref-for-container⑤">container</a> for <code>TR</code></p>
+     <li data-md>
+      <p>Let <code>CASN</code> be the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②③">shape tree assignment</a> whose <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④⑦">shape tree</a> <code>CASNST</code> manages the allowed members of <code>PC</code> via <code>CASNST st:contains</code></p>
+      <ol>
+       <li data-md>
+        <p>If <code>CASN</code> is not found, the request can be passed through, as the created
+resource <code>TR</code> will not be a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③①">managed resource</a></p>
+      </ol>
+     <li data-md>
+      <p>Call <a href="#validate-contained-resource">§ 5.3 Validate Contained Resource</a> with inputs: <code>CASNST</code>, <code>TR</code>, <code>TST</code>, <code>FN</code></p>
+      <ol>
+       <li data-md>
+        <p>Let <code>AVR</code> be the positive validation result returned</p>
+      </ol>
+     <li data-md>
+      <p>Create <code>TR</code></p>
+     <li data-md>
+      <p>Call <a href="#assign-resource">§ 5.1 Assign Shape Tree to Resource</a> with inputs: <code>NULL</code>, <code>CASN st:hasRootAssignment</code>, <code>CASN</code>, <code>TR</code>, <code>AVR</code></p>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="4.5" id="update-managed-instance"><span class="secno">4.5. </span><span class="content">Update Managed Instance</span><a class="self-link" href="#update-managed-instance"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2">
+        This operation updates an existing <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③②">managed resource</a>. 
+       <p class="note" role="note"><span class="marker">Note:</span> This operation can be performed as
+        a standard HTTP operation with no knowledge of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④⑧">shape trees</a>.
+        However, server-side processing is more efficient when
+        the target shape tree and focus node for validation can be provided
+        by the <a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent①①">client-side agent</a>.</p>
+   </table>
+   <h4 class="heading settled" data-level="4.5.1" id="update-instance-client"><span class="secno">4.5.1. </span><span class="content"><a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent①②">Client-side</a></span><a class="self-link" href="#update-instance-client"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>TR</code>
+      <td>The URI of the target <a data-link-type="dfn" href="#resource" id="ref-for-resource⑦">resource</a>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Perform an HTTP <code>PUT</code> or <code>PATCH</code> on an existing resource <code>TR</code> to update the <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance⑥">managed instance</a></p>
+    </ol>
+   </div>
+   <h4 class="heading settled" data-level="4.5.2" id="update-instance-server"><span class="secno">4.5.2. </span><span class="content"><a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent⑨">Server-side</a></span><a class="self-link" href="#update-instance-server"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>REQ</code>
+      <td>A HTTP <code>PUT</code> or <code>PATCH</code> request on the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③③">managed resource</a> from the <a href="#update-instance-client">previous sequence</a>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Let <code>TR</code> be the target resource of <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>UR</code> be the updated version of <code>TR</code> in the body of <code>REQ</code></p>
+     <li data-md>
+      <p>Let <code>MR</code> be the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③③">shape tree manager</a> associated with <code>TR</code></p>
+     <li data-md>
+      <p>If <code>MR</code> exists</p>
+      <ol>
+       <li data-md>
+        <p>For each <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②④">shape tree assignment</a> <code>ASN</code> in <code>MR</code></p>
+        <ol>
+         <li data-md>
+          <p>Call <a href="#validate-resource">§ 5.4 Validate Resource</a> with inputs: <code>ASN st:assigns</code>, <code>UR</code>, <code>ASN st:focusNode</code></p>
+        </ol>
+      </ol>
+     <li data-md>
+      <p>Update <a data-link-type="dfn" href="#resource" id="ref-for-resource⑧">resource</a> <code>TR</code> with <code>UR</code></p>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="4.6" id="delete-managed-instance"><span class="secno">4.6. </span><span class="content">Delete Managed Instance</span><a class="self-link" href="#delete-managed-instance"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2">
+        This operation deletes a <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③④">managed resource</a> for an existing <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance⑦">managed instance</a>. 
+       <p class="note" role="note"><span class="marker">Note:</span> This operation should be performed as
+        a standard HTTP operation with no knowledge of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree④⑨">shape trees</a>. It
+        is included here for completeness</p>
+   </table>
+   <h4 class="heading settled" data-level="4.6.1" id="delete-instance-client"><span class="secno">4.6.1. </span><span class="content"><a data-link-type="dfn" href="#client-side-agent" id="ref-for-client-side-agent①③">Client-side</a></span><a class="self-link" href="#delete-instance-client"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>TR</code>
+      <td>The URI of the target <a data-link-type="dfn" href="#resource" id="ref-for-resource⑨">resource</a>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Perform an HTTP <code>DELETE</code> on an existing resource <code>TR</code> to delete the <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance⑧">managed instance</a></p>
+    </ol>
+   </div>
+   <h4 class="heading settled" data-level="4.6.2" id="delete-instance-server"><span class="secno">4.6.2. </span><span class="content"><a data-link-type="dfn" href="#server-side-agent" id="ref-for-server-side-agent①⓪">Server-side</a></span><a class="self-link" href="#delete-instance-server"></a></h4>
+   <table align="left" class="data operation">
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>REQ</code>
+      <td>An HTTP <code>DELETE</code> request on the <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③⑤">managed resource</a> from the <a href="#update-instance-client">previous sequence</a>
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td>A standard HTTP response
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Let <code>TR</code> be the target resource of <code>REQ</code></p>
+     <li data-md>
+      <p>Delete <a data-link-type="dfn" href="#resource" id="ref-for-resource①⓪">resource</a> <code>TR</code></p>
+      <ul>
+       <li data-md>
+        <p>The <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③④">Shape Tree Manager</a> associated with <code>TR</code> <em class="rfc2119">MUST</em> be removed with <code>TR</code></p>
+      </ul>
+    </ol>
+   </div>
+   <h2 class="heading settled" data-level="5" id="algorithms"><span class="secno">5. </span><span class="content">Shape Tree Algorithms</span><a class="self-link" href="#algorithms"></a></h2>
+   <p>The following algorithms define a library of functions referenced in the above <a href="#operations">operations</a>.</p>
+   <h3 class="heading settled" data-level="5.1" id="assign-resource"><span class="secno">5.1. </span><span class="content">Assign Shape Tree to Resource</span><a class="self-link" href="#assign-resource"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2"> Assigns the target <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤⓪">shape tree</a> <code>TST</code> to the target <a data-link-type="dfn" href="#resource" id="ref-for-resource①①">resource</a> resource <code>TR</code>. 
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>RTMR</code>
+      <td> The root <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③⑤">shape tree manager</a> of the planted hierarchy 
+     <tr>
+      <td><code>RTASN</code>
+      <td> The root <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②⑤">shape tree assignment</a> of the planted hierarchy 
+     <tr>
+      <td><code>PASN</code>
+      <td> The parent <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②⑥">shape tree assignment</a> of the primary resource <code>R</code> 
+     <tr>
+      <td><code>R</code>
+      <td> The primary resource for assignment 
+     <tr>
+      <td><code>AVR</code>
+      <td> An optional validation result indicating that that <code>R</code> has
+        already passed validation in advance and does not need this algorithm 
+        to perform validation again. 
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td> A regular HTTP Response 
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Let <code>ATPLANTROOT</code> be true if <code>RTASN st:manages</code> is <code>R</code></p>
+     <li data-md>
+      <p>If <code>AVR</code> is provided</p>
+      <ol>
+       <li data-md>
+        <p>Let <code>RST</code> be the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤①">shape tree</a> that <code>R</code> has been validated to conform to</p>
+       <li data-md>
+        <p>Let <code>RFN</code> be the focus node for shape validation by <code>RST st:shape</code></p>
+      </ol>
+     <li data-md>
+      <p>If <code>ATPLANTROOT</code></p>
+      <ol>
+       <li data-md>
+        <p>Let <code>RST</code> be <code>RTASN st:assigns</code></p>
+       <li data-md>
+        <p>If <code>AVR</code> was not provided call <a href="#validate-resource">§ 5.4 Validate Resource</a> with inputs: <code>RST</code>, <code>R</code>, <code>NULL</code></p>
+       <li data-md>
+        <p>Let <code>RFN</code> be the matching focus node provided in the validation result</p>
+      </ol>
+     <li data-md>
+      <p>If not <code>ATPLANTROOT</code> and <code>AVR</code> was not provided</p>
+      <ol>
+       <li data-md>
+        <p>Call <a href="#validate-contained-resource">§ 5.3 Validate Contained Resource</a> with inputs: <code>PASN st:assigns</code>, <code>R</code>, <code>RST</code>, <code>RFN</code></p>
+       <li data-md>
+        <p>Let <code>RST</code> be the matching <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤②">shape tree</a> provided in the validation result</p>
+       <li data-md>
+        <p>Let <code>RFN</code> be the matching focus node provided in the validation result</p>
+      </ol>
+     <li data-md>
+      <p>Let <code>RMR</code> be the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③⑥">shape tree manager</a> associated with <code>R</code></p>
+     <li data-md>
+      <p>Let <code>RASN</code> be a new <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②⑦">shape tree assignment</a> created for <code>R</code> with the following  properties:</p>
+      <ul>
+       <li data-md>
+        <p>Let <code>st:assigns</code> be <code>RST</code></p>
+       <li data-md>
+        <p>Let <code>st:manages</code> be <code>R</code></p>
+       <li data-md>
+        <p>Let <code>st:hasRootAssignment</code> be <code>RASN</code></p>
+       <li data-md>
+        <p>Let <code>st:focusNode</code> be <code>RFN</code></p>
+       <li data-md>
+        <p>Let <code>st:shape</code> be <code>RST st:shape</code></p>
+      </ul>
+     <li data-md>
+      <p>If <code>R</code> is a non-empty container, let <code>CONTAINED</code> be the set of contained resources
+sorted by type, containers first.</p>
+     <li data-md>
+      <p>For each contained resource <code>CR</code> in <code>CONTAINED</code>, starting with containers</p>
+      <ol>
+       <li data-md>
+        <p>Call <a href="#assign-resource">§ 5.1 Assign Shape Tree to Resource</a> with inputs: <code>RTMR</code>, <code>RTASN</code>, <code>RASN</code>, <code>R</code>, <code>NULL</code></p>
+      </ol>
+     <li data-md>
+      <p>Create or Update the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③⑦">Shape Tree Manager</a> <code>RMR</code></p>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="5.2" id="unassign-resource"><span class="secno">5.2. </span><span class="content">Unassign Shape Tree from Resource</span><a class="self-link" href="#unassign-resource"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2"> Unassigns a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤③">shape tree</a> managing resource <code>R</code> by removing the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②⑧">shape tree assignment</a> assigned to <code>R</code> for that <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤④">shape tree</a>. 
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>RTASN</code>
+      <td> The root <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment②⑨">shape tree assignment</a> at the top of the planted
+        hierarchy. 
+     <tr>
+      <td><code>R</code>
+      <td> The resource to unplant in the plant hierarchy of <code>RTASN</code> 
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>RESPONSE</code>
+      <td> A regular HTTP response 
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Let <code>RMR</code> be the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③⑧">shape tree manager</a> associated with <code>R</code></p>
+     <li data-md>
+      <p>Let <code>RASN</code> be the <a data-link-type="dfn" href="#shape-tree-assignment" id="ref-for-shape-tree-assignment③⓪">shape tree assignment</a> to remove for <code>R</code> where <code>RTASN</code> is equivalent to <code>RASN st:hasRootAssignment</code></p>
+     <li data-md>
+      <p>Let <code>RASNST</code> be the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤⑤">shape tree</a> <code>RASN st:assigns</code></p>
+     <li data-md>
+      <p>If <code>R</code> is a non-empty container, let <code>CONTAINED</code> be the set of contained resources
+sorted by type, containers first.</p>
+     <li data-md>
+      <p>For each contained resource <code>CR</code> in <code>CONTAINED</code>, starting with containers</p>
+      <ol>
+       <li data-md>
+        <p>Call <a href="#unassign-resource">§ 5.2 Unassign Shape Tree from Resource</a> with inputs: <code>RTASN</code>, <code>CR</code></p>
+      </ol>
+     <li data-md>
+      <p>Update or delete the <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager③⑨">Shape Tree Manager</a> <code>RMR</code></p>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="5.3" id="validate-contained-resource"><span class="secno">5.3. </span><span class="content">Validate Contained Resource</span><a class="self-link" href="#validate-contained-resource"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2"> This algorithm is responsible for determining which <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤⑥">shape tree</a> within a set
+        of shape trees mentioned in <code class="vocab">st:contains</code> is
+        applicable for a given proposed resource. 
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>ST</code>
+      <td> The validating <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤⑦">shape tree</a> 
+     <tr>
+      <td><code>R</code>
+      <td> The resource to be evaluated against the permitted set of contained <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤⑧">shape trees</a> in <code>ST st:contains</code> 
+     <tr>
+      <td><code>TST</code>
+      <td> An <em class="rfc2119">OPTIONAL</em> URI that provides the algorithm 
+        with a target shape tree that <code>R</code> is expected to conform to. No 
+        other <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑤⑨">shape trees</a> from <code>ST st:contains</code> are considered when provided. 
+     <tr>
+      <td><code>FN</code>
+      <td> An <em class="rfc2119">OPTIONAL</em> URI representing the target 
+        subject node within <code>R</code> used for shape validation. 
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>VR</code>
+      <td>
+        A validation result containing: 
+       <ul>
+        <li>Valid (true or false)
+        <li>Validating shape tree <code>ST</code>
+        <li>Matching shape tree in <code>ST st:contains</code>
+        <li>Matching shape (if applicable)
+        <li>Matching focus node (if applicable)
+       </ul>
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>If <code>TST st:contains</code> is empty, return a true validation result</p>
+     <li data-md>
+      <p>If <code>TST</code> is provided but does not exist in <code>ST st:contains</code> return a false validation result</p>
+     <li data-md>
+      <p>If <code>TST</code> is provided call <a href="#validate-resource">§ 5.4 Validate Resource</a> with inputs: <code>TST</code>, <code>R</code>, <code>FN</code></p>
+     <li data-md>
+      <p>If <code>TST</code> is not provided then for each <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥⓪">shape tree</a> <code>CST</code> linked via <code>ST st:contains</code></p>
+      <ol>
+       <li data-md>
+        <p>Call <a href="#validate-resource">§ 5.4 Validate Resource</a> with inputs: <code>CST</code>, <code>R</code>, <code>FN</code></p>
+      </ol>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="5.4" id="validate-resource"><span class="secno">5.4. </span><span class="content">Validate Resource</span><a class="self-link" href="#validate-resource"></a></h3>
+   <table align="left" class="data operation">
+    <colgroup>
+    <colgroup>
+    <thead>
+     <tr>
+      <th colspan="2">Description
+    <tbody>
+     <tr>
+      <td colspan="2"> This algorithm is responsible for determining whether a given resource
+      conforms with a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥①">shape tree</a> 
+    <thead>
+     <tr>
+      <th colspan="2">Inputs
+    <tbody>
+     <tr>
+      <td><code>ST</code>
+      <td> The <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥②">shape tree</a> that <code>R</code> will be evaluated against 
+     <tr>
+      <td><code>R</code>
+      <td> The resource to evaluate for conformance to <code>ST</code> 
+     <tr>
+      <td><code>FN</code>
+      <td> An <em class="rfc2119">Optional</em> focus node to use for shape 
+        validation when <code>ST st:shape</code> is set 
+    <thead>
+     <tr>
+      <th colspan="2">Outputs
+    <tbody>
+     <tr>
+      <td><code>VR</code>
+      <td>
+        A validation result containing: 
+       <ul>
+        <li>Valid (true or false)
+        <li>Validating shape tree <code>ST</code>
+        <li>Matching shape (if applicable)
+        <li>Matching focus node (if applicable)
+       </ul>
+   </table>
+   <div class="opdetails">
+    <ol>
+     <li data-md>
+      <p>Return a failing validation result if <code>ST st:expectedType</code> is set and is not the resource type of <code>R</code></p>
+     <li data-md>
+      <p>Return a failing validation result if <code>ST rdfs:label</code> is set and is not equal to the resource name of <code>R</code></p>
+     <li data-md>
+      <p>Return a failing validation result if <code>ST st:shape</code> is set and shape validation of the body content of <code>R</code> fails</p>
+     <li data-md>
+      <p>Return a positive validation result</p>
+    </ol>
+   </div>
+   <h2 class="heading settled" data-level="6" id="descriptions"><span class="secno">6. </span><span class="content">Describing Shape Trees</span><a class="self-link" href="#descriptions"></a></h2>
+   <h3 class="heading settled" data-level="6.1" id="description"><span class="secno">6.1. </span><span class="content">Shape Tree Description</span><a class="self-link" href="#description"></a></h3>
+   <p>While the RDF structure of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥③">shape trees</a> enable machine readability, additional
+context is needed to make it human-friendly. A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree-description">Shape Tree Description</dfn> provides a human-readable information
+about a given <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥④">shape tree</a>.</p>
+   <p><a data-link-type="dfn" href="#shape-tree-description" id="ref-for-shape-tree-description">Shape tree descriptions</a> are organized into <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set">shape tree description sets</a>.</p>
+   <figure id="shapetree-description-properties">
+    <figcaption>Shape Tree Description properties</figcaption>
+    <table align="left" class="data">
+     <colgroup>
+     <colgroup>
+     <thead>
+      <tr>
+       <th>Property
+       <th>Description
+     <tbody>
+      <tr>
+       <td><code class="vocab">st:describes</code>
+       <td>Identifies the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥⑤">shape tree</a> being described
+      <tr>
+       <td><code class="vocab">st:inDescriptionSet</code>
+       <td>Identifies the <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set①">shape tree description set</a> that the description
+        belongs to
+      <tr>
+       <td><code class="vocab">skos:prefLabel</code>
+       <td>Provides a human readable name for the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥⑥">shape tree</a>
+      <tr>
+       <td><code class="vocab">skos:definition</code>
+       <td>Provides a more in-depth, human readable description of the <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥⑦">shape tree</a>
+      <tr>
+       <td><code class="vocab">st:describesInstance</code>
+       <td>Identifies a predicate whose object value can be used to describe
+        a <a data-link-type="dfn" href="#managed-instance" id="ref-for-managed-instance⑨">managed instance</a> of the described <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥⑧">shape tree</a>. The object 
+        value must be a literal.
+      <tr>
+       <td><code class="vocab">skos:narrower</code>
+       <td>Identify a poly-hierarchy link between two <a data-link-type="dfn" href="#shape-tree-description" id="ref-for-shape-tree-description①">shape tree descriptions</a> in a <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set②">shape tree description set</a>
+      <tr>
+       <td><code class="vocab">skos:broader</code>
+       <td>Identify a poly-hierarchy link between two <a data-link-type="dfn" href="#shape-tree-description" id="ref-for-shape-tree-description②">shape tree descriptions</a> in a <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set③">shape tree description set</a>
+    </table>
+   </figure>
+   <figure id="shapetree-description-shex">
+    <figcaption>ShEx Schema for Shape Tree Description</figcaption>
+<pre class="include-code highlight"><c- g>&lt;#DescriptionShape></c-> <c- p>{</c->
+  <c- b>a</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>Description</c-><c- p>]</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>inDescriptionSet</c-> @<c- g>&lt;#DescriptionSetShape></c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>describes</c-> IRI <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>describesInstance</c-> IRI ? <c- p>;</c->
+  <c- nn>skos</c-><c- p>:</c-><c- f>prefLabel</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-> <c- p>;</c->
+  <c- nn>skos</c-><c- p>:</c-><c- f>definition</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-> ? <c- p>;</c->
+  <c- nn>skos</c-><c- p>:</c-><c- f>narrower</c-> IRI ? <c- p>;</c->
+  <c- nn>skos</c-><c- p>:</c-><c- f>broader</c-> IRI? <c- p>;</c->
+<c- p>}</c->
+</pre>
+   </figure>
+   <h3 class="heading settled" data-level="6.2" id="description-set"><span class="secno">6.2. </span><span class="content">Shape Tree Description Set</span><a class="self-link" href="#description-set"></a></h3>
+   <p><a data-link-type="dfn" href="#shape-tree-description" id="ref-for-shape-tree-description③">Shape tree descriptions</a> are organized into a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape-tree-description-set">Shape Tree Description Set</dfn>.</p>
+   <p>An RDF resource containing one or more <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑥⑨">shape trees</a> can be <em class="rfc2119">OPTIONALLY</em> linked to
+a <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set④">shape tree description set</a> to describe the contained shape trees in 
+human-readable terms.</p>
+   <p>Each <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set⑤">shape tree description set</a> is made up of any number of <a data-link-type="dfn" href="#shape-tree-description" id="ref-for-shape-tree-description④">shape tree descriptions</a>.</p>
+   <p>SKOS constructs such as <code>skos:narrower</code> and <code>skos:broader</code> <em class="rfc2119">MAY</em> be used to group or organize related <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦⓪">shape trees</a> in a given <a data-link-type="dfn" href="#shape-tree-description-set" id="ref-for-shape-tree-description-set⑥">shape tree description set</a></p>
+   <figure id="shapetree-description-set-properties">
+    <figcaption>Shape Tree Description Set properties</figcaption>
+    <table align="left" class="data">
+     <colgroup>
+     <colgroup>
+     <thead>
+      <tr>
+       <th>Property
+       <th>Description
+     <tbody>
+      <tr>
+       <td><code class="vocab">st:usesLanguage</code>
+       <td>Identifies the <code>xsd:language</code> utilized in the contained <a data-link-type="dfn" href="#shape-tree-description" id="ref-for-shape-tree-description⑤">shape tree descriptions</a>
+    </table>
+   </figure>
+   <figure id="shapetree-description-set-shex">
+    <figcaption>ShEx Schema for Shape Tree Description Set</figcaption>
+<pre class="include-code highlight"><c- g>&lt;#DescriptionSetShape></c-> <c- p>{</c->
+  <c- b>a</c-> <c- p>[</c-><c- nn>st</c-><c- p>:</c-><c- f>DescriptionSet</c-><c- p>]</c-> <c- p>;</c->
+  <c- nn>st</c-><c- p>:</c-><c- f>usesLanguage</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>language</c->
+<c- p>}</c->
+</pre>
+   </figure>
+   <h2 class="heading settled" data-level="7" id="definitions"><span class="secno">7. </span><span class="content">Definitions</span><a class="self-link" href="#definitions"></a></h2>
+    Two terms are imported from <a data-link-type="biblio" href="#biblio-rdf" title="RDF 1.1 Concepts and Abstract Syntax">[RDF]</a>: 
+   <ul>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="triple">triple</dfn> -- an <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-rdf-triple">RDF triple</a></p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="rdf-graph">RDF graph</dfn> -- an <a href="https://www.w3.org/TR/rdf11-concepts/#dfn-rdf-triple">RDF graph</a> as defined in <a data-link-type="biblio" href="#biblio-rdf" title="RDF 1.1 Concepts and Abstract Syntax">[RDF]</a>.</p>
+   </ul>
+   <p>The following terms are used throughout this specification:</p>
+   <ul>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="client-side-agent">Client-side Agent</dfn> -- A software component interacting with a server.
+    A client-side agent will typically rely on the server for shape tree 
+    evaluation and/or validation, but may choose to apply it locally
+    as well.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="container">Container</dfn> -- the generalized notion of a collection of resources;
+    implementations of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦①">shape trees</a> <em class="rfc2119">MAY</em> use a
+    container implementation such as <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a> (<a href="https://www.w3.org/TR/ldp/#dfn-linked-data-platform-container">ldp:Container</a>, <a href="https://www.w3.org/TR/ldp/#dfn-linked-data-platform-basic-container">ldp:BasicContainer</a>,
+    etc.)</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ecosystem">Ecosystem</dfn> -- a software environment with resources organized in
+    some hierarchical grouping that rely on <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦②">shape tree</a> concepts to
+    better organize and validate structures of data</p>
+    <li data-md>
+     <p><dfn data-dfn-type="dfn" data-noexport id="focus-node">Focus Node<a class="self-link" href="#focus-node"></a></dfn> -- a node in an <a data-link-type="dfn" href="#rdf-graph" id="ref-for-rdf-graph">RDF graph</a>.  In
+    the context of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦③">shape trees</a>, one usage is directing <a data-link-type="dfn" href="#shape" id="ref-for-shape⑥">shape</a> validation
+    to the appropriate node in an <a data-link-type="dfn" href="#rdf-graph" id="ref-for-rdf-graph①">RDF graph</a>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="managed-container">Managed Container</dfn> -- any <a data-link-type="dfn" href="#managed-resource" id="ref-for-managed-resource③⑥">managed resource</a> that is a <a data-link-type="dfn" href="#container" id="ref-for-container⑥">container</a>. A <a data-link-type="dfn" href="#managed-container" id="ref-for-managed-container②">Managed Container</a> <em class="rfc2119">MAY</em> be an <a data-link-type="dfn">Instance Root</a> or hierarchically nested within the
+    resource hierarchy.</p>
+    <li data-md>
+     <p><dfn data-dfn-type="dfn" data-noexport id="non-rdf-source">Non-RDF Source<a class="self-link" href="#non-rdf-source"></a></dfn> -- the generalized notion of document not
+    containing linked-data triples; this may include
+    plain text or binary data.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="resource">Resource</dfn> -- the generalized notion of document containing linked-data;
+    implementations of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦④">shape trees</a> may use a resource implementation such
+    as <a data-link-type="biblio" href="#biblio-ldp" title="Linked Data Platform 1.0">[LDP]</a> (ldp:Resource, etc.)</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="server-side-agent">Server-side Agent</dfn> -- A server-side software component.  Server-side
+    agents that support shape trees are responsible for data validation and
+    maintaining <a data-link-type="dfn" href="#shape-tree-manager" id="ref-for-shape-tree-manager④⓪">shape tree managers</a>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape">Shape</dfn> -- a schema definition allowing validation of an RDF
+    subject.  Example specifications supporting the notion of shapes include <a data-link-type="biblio" href="#biblio-shex" title="Shape Expressions Language 2.1">[ShEx]</a> and <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="skos-graph">SKOS Graph</dfn> -- an <a data-link-type="dfn" href="#rdf-graph" id="ref-for-rdf-graph②">RDF graph</a> conforming to <a data-link-type="biblio" href="#biblio-skos-reference" title="SKOS Simple Knowledge Organization System Reference">[skos-reference]</a> data model.  For purposes of <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦⑤">shape trees</a> a <a data-link-type="dfn" href="#skos-graph" id="ref-for-skos-graph">SKOS Graph</a> is used to describe a <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦⑥">shape tree</a> in
+    human-readable terms.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="unmanaged-resource">Unmanaged Resource</dfn> -- any <a data-link-type="dfn" href="#resource" id="ref-for-resource①②">resource</a> which does not have an associated <a data-link-type="dfn" href="#shape-tree" id="ref-for-shape-tree⑦⑦">shape tree</a>.</p>
+   </ul>
+  </main>
+  <div data-fill-with="conformance">
+   <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="no-ref no-num heading settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <p>Conformance requirements are expressed
+    with a combination of descriptive assertions
+    and RFC 2119 terminology.
+    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+    in the normative parts of this document
+    are to be interpreted as described in RFC 2119.
+    However, for readability,
+    these words do not appear in all uppercase letters in this specification. </p>
+   <p>All of the text of this specification is normative
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> </p>
+   <p>Examples in this specification are introduced with the words “for example”
+    or are set apart from the normative text
+    with <code>class="example"</code>,
+    like this: </p>
+   <div class="example" id="w3c-example">
+    <a class="self-link" href="#w3c-example"></a> 
+    <p>This is an example of an informative example. </p>
+   </div>
+   <p>Informative notes begin with the word “Note”
+    and are set apart from the normative text
+    with <code>class="note"</code>,
+    like this: </p>
+   <p class="note" role="note">Note, this is an informative note.</p>
+   <section>
+    <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
+    <p>Requirements phrased in the imperative as part of algorithms
+    (such as "strip any leading space characters"
+    or "return false and abort these steps")
+    are to be interpreted with the meaning of the key word
+    ("must", "should", "may", etc)
+    used in introducing the algorithm. </p>
+    <p>Conformance requirements phrased as algorithms or specific steps
+    can be implemented in any manner,
+    so long as the end result is equivalent.
+    In particular, the algorithms defined in this specification
+    are intended to be easy to understand
+    and are not intended to be performant.
+    Implementers are encouraged to optimize. </p>
+   </section>
+  </div>
+<script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#client-side-agent">Client-side Agent</a><span>, in § 7</span>
+   <li><a href="#container">Container</a><span>, in § 7</span>
+   <li><a href="#ecosystem">Ecosystem</a><span>, in § 7</span>
+   <li><a href="#focus-node">Focus Node</a><span>, in § 7</span>
+   <li><a href="#in-scope">in-scope</a><span>, in § 2</span>
+   <li><a href="#managed-container">Managed Container</a><span>, in § 7</span>
+   <li><a href="#managed-instance">managed instance</a><span>, in § 2</span>
+   <li><a href="#managed-resource">managed resource</a><span>, in § 2</span>
+   <li><a href="#non-rdf-source">Non-RDF Source</a><span>, in § 7</span>
+   <li><a href="#rdf-graph">RDF graph</a><span>, in § 7</span>
+   <li><a href="#resource">Resource</a><span>, in § 7</span>
+   <li><a href="#root-shape-tree-assignment">root shape tree assignment</a><span>, in § 3.2</span>
+   <li><a href="#server-side-agent">Server-side Agent</a><span>, in § 7</span>
+   <li><a href="#shape">Shape</a><span>, in § 7</span>
+   <li><a href="#shape-path">shape path</a><span>, in § 2</span>
+   <li><a href="#shape-tree">shape tree</a><span>, in § 2</span>
+   <li><a href="#shape-tree-assignment">shape tree assignment</a><span>, in § 3.2</span>
+   <li><a href="#shape-tree-consistency">shape tree consistency</a><span>, in § 1</span>
+   <li><a href="#shape-tree-description">Shape Tree Description</a><span>, in § 6.1</span>
+   <li><a href="#shape-tree-description-set">Shape Tree Description Set</a><span>, in § 6.2</span>
+   <li><a href="#shape-tree-manager">shape tree manager</a><span>, in § 3.1</span>
+   <li><a href="#shape-tree-reference">shape tree reference</a><span>, in § 2</span>
+   <li><a href="#skos-graph">SKOS Graph</a><span>, in § 7</span>
+   <li><a href="#static-resource">static resource</a><span>, in § 2</span>
+   <li><a href="#triple">triple</a><span>, in § 7</span>
+   <li><a href="#unmanaged-resource">Unmanaged Resource</a><span>, in § 7</span>
+  </ul>
+  <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+  </dl>
+  <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-ldp">[LDP]
+   <dd>Steve Speicher; John Arwe; Ashok Malhotra. <a href="https://www.w3.org/TR/ldp/"><cite>Linked Data Platform 1.0</cite></a>. URL: <a href="https://www.w3.org/TR/ldp/">https://www.w3.org/TR/ldp/</a>
+   <dt id="biblio-rdf">[RDF]
+   <dd>Richard Cyganiak; David Wood; Markus Lanthaler. <a href="https://www.w3.org/TR/rdf11-concepts"><cite>RDF 1.1 Concepts and Abstract Syntax</cite></a>. URL: <a href="https://www.w3.org/TR/rdf11-concepts">https://www.w3.org/TR/rdf11-concepts</a>
+   <dt id="biblio-shacl">[SHACL]
+   <dd>Holger Knublauch; Dimitris Kontokostas. <a href="https://w3c.github.io/data-shapes/shacl/"><cite>Shapes Constraint Language (SHACL)</cite></a>. URL: <a href="https://w3c.github.io/data-shapes/shacl/">https://w3c.github.io/data-shapes/shacl/</a>
+   <dt id="biblio-shex">[ShEx]
+   <dd>Eric Prud'hommeaux; et al. <a href="http://shex.io/shex-semantics/index.html"><cite>Shape Expressions Language 2.1</cite></a>. URL: <a href="http://shex.io/shex-semantics/index.html">http://shex.io/shex-semantics/index.html</a>
+   <dt id="biblio-shexpath">[SHEXPATH]
+   <dd>Eric Prud'hommeaux. <a href="https://shexspec.github.io/spec/ShExPath"><cite>Shape Expressions ShExPath Language</cite></a>. URL: <a href="https://shexspec.github.io/spec/ShExPath">https://shexspec.github.io/spec/ShExPath</a>
+   <dt id="biblio-skos-reference">[SKOS-REFERENCE]
+   <dd>Alistair Miles; Sean Bechhofer. <a href="https://www.w3.org/TR/skos-reference/"><cite>SKOS Simple Knowledge Organization System Reference</cite></a>. 18 August 2009. REC. URL: <a href="https://www.w3.org/TR/skos-reference/">https://www.w3.org/TR/skos-reference/</a>
+   <dt id="biblio-solid">[Solid]
+   <dd>Sarven Capasdisli; et al. <a href="https://solidproject.org/TR/protocol"><cite>Solid Protocol</cite></a>. URL: <a href="https://solidproject.org/TR/protocol">https://solidproject.org/TR/protocol</a>
+  </dl>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+    const dfnsJson = window.dfnsJson || {};
+
+    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
+        return mk.aside({
+            class: "dfn-panel",
+            id: `infopanel-for-${dfnID}`,
+            "data-for": dfnID,
+            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+            },
+            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+                `Info about the '${dfnText}' ${external?"external":""} reference.`),
+            mk.a({href:url}, url),
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({
+                                    href: `#${ref.id}`
+                                    },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    function genAllDfnPanels() {
+        for(const panelData of Object.values(window.dfnpanelData)) {
+            const dfnID = panelData.dfnID;
+            const dfn = document.getElementById(dfnID);
+            if(!dfn) {
+                console.log(`Can't find dfn#${dfnID}.`, panelData);
+            } else {
+                const panel = genDfnPanel(panelData);
+                append(document.body, panel);
+                insertDfnPopupAction(dfn, panel)
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+        genAllDfnPanels();
+
+        // Add popup behavior to all dfns to show the corresponding dfn-panel.
+        var dfns = queryAll('.dfn-paneled');
+        for(let dfn of dfns) { ; }
+
+        document.body.addEventListener("click", (e) => {
+            // If not handled already, just hide all dfn panels.
+            hideAllDfnPanels();
+        });
+    })
+
+
+    function hideAllDfnPanels() {
+        // Turn off any currently "on" or "activated" panels.
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
+    }
+
+    function showDfnPanel(dfnPanel, dfn) {
+        hideAllDfnPanels(); // Only display one at this time.
+        dfn.setAttribute("aria-expanded", "true");
+        dfnPanel.classList.add("on");
+        dfnPanel.style.left = "5px";
+        dfnPanel.style.top = "0px";
+        const panelRect = dfnPanel.getBoundingClientRect();
+        const panelWidth = panelRect.right - panelRect.left;
+        if (panelRect.right > document.body.scrollWidth) {
+            // Panel's overflowing the screen.
+            // Just drop it below the dfn and flip it rightward instead.
+            // This still wont' fix things if the screen is *really* wide,
+            // but fixing that's a lot harder without 'anchor()'.
+            dfnPanel.style.top = "1.5em";
+            dfnPanel.style.left = "auto";
+            dfnPanel.style.right = "0px";
+        }
+    }
+
+    function pinDfnPanel(dfnPanel) {
+        // Switch it to "activated" state, which pins it.
+        dfnPanel.classList.add("activated");
+        dfnPanel.style.left = null;
+        dfnPanel.style.top = null;
+    }
+
+    function hideDfnPanel(dfnPanel, dfn) {
+        if(!dfn) {
+            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
+        }
+        dfn.setAttribute("aria-expanded", "false")
+        dfnPanel.classList.remove("on");
+        dfnPanel.classList.remove("activated");
+    }
+
+    function toggleDfnPanel(dfnPanel, dfn) {
+        if(dfnPanel.classList.contains("on")) {
+            hideDfnPanel(dfnPanel, dfn);
+        } else {
+            showDfnPanel(dfnPanel, dfn);
+        }
+    }
+
+    function insertDfnPopupAction(dfn, dfnPanel) {
+        // Find dfn panel
+        const panelWrapper = document.createElement('span');
+        panelWrapper.appendChild(dfnPanel);
+        panelWrapper.style.position = "relative";
+        panelWrapper.style.height = "0px";
+        dfn.insertAdjacentElement("afterend", panelWrapper);
+        dfn.setAttribute('role', 'button');
+        dfn.setAttribute('aria-expanded', 'false')
+        dfn.tabIndex = 0;
+        dfn.classList.add('has-dfn-panel');
+        dfn.addEventListener('click', (event) => {
+            showDfnPanel(dfnPanel, dfn);
+            event.stopPropagation();
+        });
+        dfn.addEventListener('keypress', (event) => {
+            const kc = event.keyCode;
+            // 32->Space, 13->Enter
+            if(kc == 32 || kc == 13) {
+                toggleDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        });
+
+        dfnPanel.addEventListener('click', (event) => {
+            if (event.target.nodeName == 'A') {
+                pinDfnPanel(dfnPanel);
+            }
+            event.stopPropagation();
+        });
+
+        dfnPanel.addEventListener('keydown', (event) => {
+            if(event.keyCode == 27) { // Escape key
+                hideDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        })
+    }
+}
+</script>
+<script>/* Boilerplate: script-dfn-panel-json */
+window.dfnpanelData = {};
+window.dfnpanelData['shape-tree-consistency'] = {"dfnID": "shape-tree-consistency", "url": "#shape-tree-consistency", "dfnText": "shape tree consistency", "refSections": [{"refs": [{"id": "ref-for-shape-tree-consistency"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-shape-tree-consistency\u2460"}], "title": "1.1. ShapeTree Support From Proxy or Client-side Library"}], "external": false};
+window.dfnpanelData['shape-tree'] = {"dfnID": "shape-tree", "url": "#shape-tree", "dfnText": "shape tree", "refSections": [{"refs": [{"id": "ref-for-shape-tree"}, {"id": "ref-for-shape-tree\u2460"}, {"id": "ref-for-shape-tree\u2461"}, {"id": "ref-for-shape-tree\u2462"}, {"id": "ref-for-shape-tree\u2463"}, {"id": "ref-for-shape-tree\u2464"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-shape-tree\u2465"}, {"id": "ref-for-shape-tree\u2466"}, {"id": "ref-for-shape-tree\u2467"}, {"id": "ref-for-shape-tree\u2468"}, {"id": "ref-for-shape-tree\u2460\u24ea"}, {"id": "ref-for-shape-tree\u2460\u2460"}, {"id": "ref-for-shape-tree\u2460\u2461"}], "title": "1.1. ShapeTree Support From Proxy or Client-side Library"}, {"refs": [{"id": "ref-for-shape-tree\u2460\u2462"}, {"id": "ref-for-shape-tree\u2460\u2463"}, {"id": "ref-for-shape-tree\u2460\u2464"}, {"id": "ref-for-shape-tree\u2460\u2465"}, {"id": "ref-for-shape-tree\u2460\u2466"}, {"id": "ref-for-shape-tree\u2460\u2467"}, {"id": "ref-for-shape-tree\u2460\u2468"}, {"id": "ref-for-shape-tree\u2461\u24ea"}, {"id": "ref-for-shape-tree\u2461\u2460"}, {"id": "ref-for-shape-tree\u2461\u2461"}, {"id": "ref-for-shape-tree\u2461\u2462"}, {"id": "ref-for-shape-tree\u2461\u2463"}, {"id": "ref-for-shape-tree\u2461\u2464"}, {"id": "ref-for-shape-tree\u2461\u2465"}, {"id": "ref-for-shape-tree\u2461\u2466"}, {"id": "ref-for-shape-tree\u2461\u2467"}, {"id": "ref-for-shape-tree\u2461\u2468"}], "title": "2. Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree\u2462\u24ea"}], "title": "3.1. Shape Tree Manager"}, {"refs": [{"id": "ref-for-shape-tree\u2462\u2460"}, {"id": "ref-for-shape-tree\u2462\u2461"}, {"id": "ref-for-shape-tree\u2462\u2462"}, {"id": "ref-for-shape-tree\u2462\u2463"}], "title": "3.2. Shape Tree Assignment"}, {"refs": [{"id": "ref-for-shape-tree\u2462\u2464"}, {"id": "ref-for-shape-tree\u2462\u2465"}, {"id": "ref-for-shape-tree\u2462\u2466"}, {"id": "ref-for-shape-tree\u2462\u2467"}, {"id": "ref-for-shape-tree\u2462\u2468"}, {"id": "ref-for-shape-tree\u2463\u24ea"}, {"id": "ref-for-shape-tree\u2463\u2460"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2461"}], "title": "4.1. Discover Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2462"}], "title": "4.2. Plant Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2463"}, {"id": "ref-for-shape-tree\u2463\u2464"}], "title": "4.3. Unplant Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2465"}], "title": "4.4. Create Managed Instance"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2466"}], "title": "4.4.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2467"}], "title": "4.5. Update Managed Instance"}, {"refs": [{"id": "ref-for-shape-tree\u2463\u2468"}], "title": "4.6. Delete Managed Instance"}, {"refs": [{"id": "ref-for-shape-tree\u2464\u24ea"}, {"id": "ref-for-shape-tree\u2464\u2460"}, {"id": "ref-for-shape-tree\u2464\u2461"}], "title": "5.1. Assign Shape Tree to Resource"}, {"refs": [{"id": "ref-for-shape-tree\u2464\u2462"}, {"id": "ref-for-shape-tree\u2464\u2463"}, {"id": "ref-for-shape-tree\u2464\u2464"}], "title": "5.2. Unassign Shape Tree from Resource"}, {"refs": [{"id": "ref-for-shape-tree\u2464\u2465"}, {"id": "ref-for-shape-tree\u2464\u2466"}, {"id": "ref-for-shape-tree\u2464\u2467"}, {"id": "ref-for-shape-tree\u2464\u2468"}, {"id": "ref-for-shape-tree\u2465\u24ea"}], "title": "5.3. Validate Contained Resource"}, {"refs": [{"id": "ref-for-shape-tree\u2465\u2460"}, {"id": "ref-for-shape-tree\u2465\u2461"}], "title": "5.4. Validate Resource"}, {"refs": [{"id": "ref-for-shape-tree\u2465\u2462"}, {"id": "ref-for-shape-tree\u2465\u2463"}, {"id": "ref-for-shape-tree\u2465\u2464"}, {"id": "ref-for-shape-tree\u2465\u2465"}, {"id": "ref-for-shape-tree\u2465\u2466"}, {"id": "ref-for-shape-tree\u2465\u2467"}], "title": "6.1. Shape Tree Description"}, {"refs": [{"id": "ref-for-shape-tree\u2465\u2468"}, {"id": "ref-for-shape-tree\u2466\u24ea"}], "title": "6.2. Shape Tree Description Set"}, {"refs": [{"id": "ref-for-shape-tree\u2466\u2460"}, {"id": "ref-for-shape-tree\u2466\u2461"}, {"id": "ref-for-shape-tree\u2466\u2462"}, {"id": "ref-for-shape-tree\u2466\u2463"}, {"id": "ref-for-shape-tree\u2466\u2464"}, {"id": "ref-for-shape-tree\u2466\u2465"}, {"id": "ref-for-shape-tree\u2466\u2466"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['managed-instance'] = {"dfnID": "managed-instance", "url": "#managed-instance", "dfnText": "managed instance", "refSections": [{"refs": [{"id": "ref-for-managed-instance"}, {"id": "ref-for-managed-instance\u2460"}, {"id": "ref-for-managed-instance\u2461"}, {"id": "ref-for-managed-instance\u2462"}], "title": "2. Shape Tree"}, {"refs": [{"id": "ref-for-managed-instance\u2463"}], "title": "4.4. Create Managed Instance"}, {"refs": [{"id": "ref-for-managed-instance\u2464"}], "title": "4.4.1. Client-side"}, {"refs": [{"id": "ref-for-managed-instance\u2465"}], "title": "4.5.1. Client-side"}, {"refs": [{"id": "ref-for-managed-instance\u2466"}], "title": "4.6. Delete Managed Instance"}, {"refs": [{"id": "ref-for-managed-instance\u2467"}], "title": "4.6.1. Client-side"}, {"refs": [{"id": "ref-for-managed-instance\u2468"}], "title": "6.1. Shape Tree Description"}], "external": false};
+window.dfnpanelData['managed-resource'] = {"dfnID": "managed-resource", "url": "#managed-resource", "dfnText": "managed resource", "refSections": [{"refs": [{"id": "ref-for-managed-resource"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-managed-resource\u2460"}, {"id": "ref-for-managed-resource\u2461"}, {"id": "ref-for-managed-resource\u2462"}, {"id": "ref-for-managed-resource\u2463"}, {"id": "ref-for-managed-resource\u2464"}, {"id": "ref-for-managed-resource\u2465"}, {"id": "ref-for-managed-resource\u2466"}, {"id": "ref-for-managed-resource\u2467"}, {"id": "ref-for-managed-resource\u2468"}, {"id": "ref-for-managed-resource\u2460\u24ea"}, {"id": "ref-for-managed-resource\u2460\u2460"}], "title": "2. Shape Tree"}, {"refs": [{"id": "ref-for-managed-resource\u2460\u2461"}, {"id": "ref-for-managed-resource\u2460\u2462"}, {"id": "ref-for-managed-resource\u2460\u2463"}], "title": "3.1. Shape Tree Manager"}, {"refs": [{"id": "ref-for-managed-resource\u2460\u2464"}, {"id": "ref-for-managed-resource\u2460\u2465"}, {"id": "ref-for-managed-resource\u2460\u2466"}, {"id": "ref-for-managed-resource\u2460\u2467"}, {"id": "ref-for-managed-resource\u2460\u2468"}, {"id": "ref-for-managed-resource\u2461\u24ea"}, {"id": "ref-for-managed-resource\u2461\u2460"}], "title": "3.2. Shape Tree Assignment"}, {"refs": [{"id": "ref-for-managed-resource\u2461\u2461"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-managed-resource\u2461\u2462"}, {"id": "ref-for-managed-resource\u2461\u2463"}, {"id": "ref-for-managed-resource\u2461\u2464"}, {"id": "ref-for-managed-resource\u2461\u2465"}], "title": "4.1. Discover Shape Tree"}, {"refs": [{"id": "ref-for-managed-resource\u2461\u2466"}], "title": "4.2.1. Client-side"}, {"refs": [{"id": "ref-for-managed-resource\u2461\u2467"}, {"id": "ref-for-managed-resource\u2461\u2468"}], "title": "4.3. Unplant Shape Tree"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u24ea"}], "title": "4.3.1. Client-side"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u2460"}], "title": "4.4.2. Server-side"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u2461"}], "title": "4.5. Update Managed Instance"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u2462"}], "title": "4.5.2. Server-side"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u2463"}], "title": "4.6. Delete Managed Instance"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u2464"}], "title": "4.6.2. Server-side"}, {"refs": [{"id": "ref-for-managed-resource\u2462\u2465"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['shape-tree-reference'] = {"dfnID": "shape-tree-reference", "url": "#shape-tree-reference", "dfnText": "shape tree reference", "refSections": [{"refs": [{"id": "ref-for-shape-tree-reference"}, {"id": "ref-for-shape-tree-reference\u2460"}], "title": "2. Shape Tree"}], "external": false};
+window.dfnpanelData['shape-path'] = {"dfnID": "shape-path", "url": "#shape-path", "dfnText": "shape path", "refSections": [{"refs": [{"id": "ref-for-shape-path"}, {"id": "ref-for-shape-path\u2460"}], "title": "2. Shape Tree"}], "external": false};
+window.dfnpanelData['shape-tree-manager'] = {"dfnID": "shape-tree-manager", "url": "#shape-tree-manager", "dfnText": "shape tree manager", "refSections": [{"refs": [{"id": "ref-for-shape-tree-manager"}, {"id": "ref-for-shape-tree-manager\u2460"}, {"id": "ref-for-shape-tree-manager\u2461"}, {"id": "ref-for-shape-tree-manager\u2462"}], "title": "2. Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2463"}, {"id": "ref-for-shape-tree-manager\u2464"}, {"id": "ref-for-shape-tree-manager\u2465"}, {"id": "ref-for-shape-tree-manager\u2466"}, {"id": "ref-for-shape-tree-manager\u2467"}], "title": "3.1. Shape Tree Manager"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2468"}, {"id": "ref-for-shape-tree-manager\u2460\u24ea"}, {"id": "ref-for-shape-tree-manager\u2460\u2460"}, {"id": "ref-for-shape-tree-manager\u2460\u2461"}, {"id": "ref-for-shape-tree-manager\u2460\u2462"}], "title": "3.2. Shape Tree Assignment"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2460\u2463"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2460\u2464"}, {"id": "ref-for-shape-tree-manager\u2460\u2465"}, {"id": "ref-for-shape-tree-manager\u2460\u2466"}, {"id": "ref-for-shape-tree-manager\u2460\u2467"}, {"id": "ref-for-shape-tree-manager\u2460\u2468"}], "title": "4.1. Discover Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2461\u24ea"}, {"id": "ref-for-shape-tree-manager\u2461\u2460"}], "title": "4.2. Plant Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2461\u2461"}, {"id": "ref-for-shape-tree-manager\u2461\u2462"}], "title": "4.2.1. Client-side"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2461\u2463"}, {"id": "ref-for-shape-tree-manager\u2461\u2464"}, {"id": "ref-for-shape-tree-manager\u2461\u2465"}], "title": "4.2.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2461\u2466"}, {"id": "ref-for-shape-tree-manager\u2461\u2467"}], "title": "4.3.1. Client-side"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2461\u2468"}, {"id": "ref-for-shape-tree-manager\u2462\u24ea"}, {"id": "ref-for-shape-tree-manager\u2462\u2460"}, {"id": "ref-for-shape-tree-manager\u2462\u2461"}], "title": "4.3.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2462\u2462"}], "title": "4.5.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2462\u2463"}], "title": "4.6.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2462\u2464"}, {"id": "ref-for-shape-tree-manager\u2462\u2465"}, {"id": "ref-for-shape-tree-manager\u2462\u2466"}], "title": "5.1. Assign Shape Tree to Resource"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2462\u2467"}, {"id": "ref-for-shape-tree-manager\u2462\u2468"}], "title": "5.2. Unassign Shape Tree from Resource"}, {"refs": [{"id": "ref-for-shape-tree-manager\u2463\u24ea"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['shape-tree-assignment'] = {"dfnID": "shape-tree-assignment", "url": "#shape-tree-assignment", "dfnText": "shape tree assignment", "refSections": [{"refs": [{"id": "ref-for-shape-tree-assignment"}, {"id": "ref-for-shape-tree-assignment\u2460"}], "title": "3.1. Shape Tree Manager"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2461"}, {"id": "ref-for-shape-tree-assignment\u2462"}, {"id": "ref-for-shape-tree-assignment\u2463"}, {"id": "ref-for-shape-tree-assignment\u2464"}, {"id": "ref-for-shape-tree-assignment\u2465"}, {"id": "ref-for-shape-tree-assignment\u2466"}], "title": "3.2. Shape Tree Assignment"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2467"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2468"}], "title": "4.2. Plant Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2460\u24ea"}, {"id": "ref-for-shape-tree-assignment\u2460\u2460"}, {"id": "ref-for-shape-tree-assignment\u2460\u2461"}, {"id": "ref-for-shape-tree-assignment\u2460\u2462"}], "title": "4.2.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2460\u2463"}], "title": "4.3. Unplant Shape Tree"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2460\u2464"}, {"id": "ref-for-shape-tree-assignment\u2460\u2465"}, {"id": "ref-for-shape-tree-assignment\u2460\u2466"}, {"id": "ref-for-shape-tree-assignment\u2460\u2467"}], "title": "4.3.1. Client-side"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2460\u2468"}, {"id": "ref-for-shape-tree-assignment\u2461\u24ea"}, {"id": "ref-for-shape-tree-assignment\u2461\u2460"}, {"id": "ref-for-shape-tree-assignment\u2461\u2461"}], "title": "4.3.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2461\u2462"}], "title": "4.4.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2461\u2463"}], "title": "4.5.2. Server-side"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2461\u2464"}, {"id": "ref-for-shape-tree-assignment\u2461\u2465"}, {"id": "ref-for-shape-tree-assignment\u2461\u2466"}], "title": "5.1. Assign Shape Tree to Resource"}, {"refs": [{"id": "ref-for-shape-tree-assignment\u2461\u2467"}, {"id": "ref-for-shape-tree-assignment\u2461\u2468"}, {"id": "ref-for-shape-tree-assignment\u2462\u24ea"}], "title": "5.2. Unassign Shape Tree from Resource"}], "external": false};
+window.dfnpanelData['root-shape-tree-assignment'] = {"dfnID": "root-shape-tree-assignment", "url": "#root-shape-tree-assignment", "dfnText": "root shape tree assignment", "refSections": [{"refs": [{"id": "ref-for-root-shape-tree-assignment"}], "title": "3.2. Shape Tree Assignment"}], "external": false};
+window.dfnpanelData['shape-tree-description'] = {"dfnID": "shape-tree-description", "url": "#shape-tree-description", "dfnText": "Shape Tree Description", "refSections": [{"refs": [{"id": "ref-for-shape-tree-description"}, {"id": "ref-for-shape-tree-description\u2460"}, {"id": "ref-for-shape-tree-description\u2461"}], "title": "6.1. Shape Tree Description"}, {"refs": [{"id": "ref-for-shape-tree-description\u2462"}, {"id": "ref-for-shape-tree-description\u2463"}, {"id": "ref-for-shape-tree-description\u2464"}], "title": "6.2. Shape Tree Description Set"}], "external": false};
+window.dfnpanelData['shape-tree-description-set'] = {"dfnID": "shape-tree-description-set", "url": "#shape-tree-description-set", "dfnText": "Shape Tree Description Set", "refSections": [{"refs": [{"id": "ref-for-shape-tree-description-set"}, {"id": "ref-for-shape-tree-description-set\u2460"}, {"id": "ref-for-shape-tree-description-set\u2461"}, {"id": "ref-for-shape-tree-description-set\u2462"}], "title": "6.1. Shape Tree Description"}, {"refs": [{"id": "ref-for-shape-tree-description-set\u2463"}, {"id": "ref-for-shape-tree-description-set\u2464"}, {"id": "ref-for-shape-tree-description-set\u2465"}], "title": "6.2. Shape Tree Description Set"}], "external": false};
+window.dfnpanelData['triple'] = {"dfnID": "triple", "url": "#triple", "dfnText": "triple", "refSections": [{"refs": [{"id": "ref-for-triple"}, {"id": "ref-for-triple\u2460"}, {"id": "ref-for-triple\u2461"}, {"id": "ref-for-triple\u2462"}, {"id": "ref-for-triple\u2463"}, {"id": "ref-for-triple\u2464"}, {"id": "ref-for-triple\u2465"}, {"id": "ref-for-triple\u2466"}], "title": "2. Shape Tree"}], "external": false};
+window.dfnpanelData['rdf-graph'] = {"dfnID": "rdf-graph", "url": "#rdf-graph", "dfnText": "RDF graph", "refSections": [{"refs": [{"id": "ref-for-rdf-graph"}, {"id": "ref-for-rdf-graph\u2460"}, {"id": "ref-for-rdf-graph\u2461"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['client-side-agent'] = {"dfnID": "client-side-agent", "url": "#client-side-agent", "dfnText": "Client-side Agent", "refSections": [{"refs": [{"id": "ref-for-client-side-agent"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-client-side-agent\u2460"}], "title": "1.1. ShapeTree Support From Proxy or Client-side Library"}, {"refs": [{"id": "ref-for-client-side-agent\u2461"}, {"id": "ref-for-client-side-agent\u2462"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-client-side-agent\u2463"}], "title": "4.1. Discover Shape Tree"}, {"refs": [{"id": "ref-for-client-side-agent\u2464"}], "title": "4.2.1. Client-side"}, {"refs": [{"id": "ref-for-client-side-agent\u2465"}], "title": "4.2.2. Server-side"}, {"refs": [{"id": "ref-for-client-side-agent\u2466"}], "title": "4.3.1. Client-side"}, {"refs": [{"id": "ref-for-client-side-agent\u2467"}], "title": "4.3.2. Server-side"}, {"refs": [{"id": "ref-for-client-side-agent\u2468"}], "title": "4.4. Create Managed Instance"}, {"refs": [{"id": "ref-for-client-side-agent\u2460\u24ea"}], "title": "4.4.1. Client-side"}, {"refs": [{"id": "ref-for-client-side-agent\u2460\u2460"}], "title": "4.5. Update Managed Instance"}, {"refs": [{"id": "ref-for-client-side-agent\u2460\u2461"}], "title": "4.5.1. Client-side"}, {"refs": [{"id": "ref-for-client-side-agent\u2460\u2462"}], "title": "4.6.1. Client-side"}], "external": false};
+window.dfnpanelData['container'] = {"dfnID": "container", "url": "#container", "dfnText": "Container", "refSections": [{"refs": [{"id": "ref-for-container"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-container\u2460"}, {"id": "ref-for-container\u2461"}, {"id": "ref-for-container\u2462"}, {"id": "ref-for-container\u2463"}], "title": "2. Shape Tree"}, {"refs": [{"id": "ref-for-container\u2464"}], "title": "4.4.2. Server-side"}, {"refs": [{"id": "ref-for-container\u2465"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['ecosystem'] = {"dfnID": "ecosystem", "url": "#ecosystem", "dfnText": "Ecosystem", "refSections": [{"refs": [{"id": "ref-for-ecosystem"}], "title": "2. Shape Tree"}], "external": false};
+window.dfnpanelData['managed-container'] = {"dfnID": "managed-container", "url": "#managed-container", "dfnText": "Managed Container", "refSections": [{"refs": [{"id": "ref-for-managed-container"}], "title": "4.3. Unplant Shape Tree"}, {"refs": [{"id": "ref-for-managed-container\u2460"}], "title": "4.4. Create Managed Instance"}, {"refs": [{"id": "ref-for-managed-container\u2461"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['resource'] = {"dfnID": "resource", "url": "#resource", "dfnText": "Resource", "refSections": [{"refs": [{"id": "ref-for-resource"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-resource\u2460"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-resource\u2461"}], "title": "4.1. Discover Shape Tree"}, {"refs": [{"id": "ref-for-resource\u2462"}, {"id": "ref-for-resource\u2463"}, {"id": "ref-for-resource\u2464"}], "title": "4.2. Plant Shape Tree"}, {"refs": [{"id": "ref-for-resource\u2465"}], "title": "4.4.1. Client-side"}, {"refs": [{"id": "ref-for-resource\u2466"}], "title": "4.5.1. Client-side"}, {"refs": [{"id": "ref-for-resource\u2467"}], "title": "4.5.2. Server-side"}, {"refs": [{"id": "ref-for-resource\u2468"}], "title": "4.6.1. Client-side"}, {"refs": [{"id": "ref-for-resource\u2460\u24ea"}], "title": "4.6.2. Server-side"}, {"refs": [{"id": "ref-for-resource\u2460\u2460"}], "title": "5.1. Assign Shape Tree to Resource"}, {"refs": [{"id": "ref-for-resource\u2460\u2461"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['server-side-agent'] = {"dfnID": "server-side-agent", "url": "#server-side-agent", "dfnText": "Server-side Agent", "refSections": [{"refs": [{"id": "ref-for-server-side-agent"}, {"id": "ref-for-server-side-agent\u2460"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-server-side-agent\u2461"}], "title": "1.1. ShapeTree Support From Proxy or Client-side Library"}, {"refs": [{"id": "ref-for-server-side-agent\u2462"}, {"id": "ref-for-server-side-agent\u2463"}, {"id": "ref-for-server-side-agent\u2464"}], "title": "4. Shape Tree Operations"}, {"refs": [{"id": "ref-for-server-side-agent\u2465"}], "title": "4.2.2. Server-side"}, {"refs": [{"id": "ref-for-server-side-agent\u2466"}], "title": "4.3.2. Server-side"}, {"refs": [{"id": "ref-for-server-side-agent\u2467"}], "title": "4.4.2. Server-side"}, {"refs": [{"id": "ref-for-server-side-agent\u2468"}], "title": "4.5.2. Server-side"}, {"refs": [{"id": "ref-for-server-side-agent\u2460\u24ea"}], "title": "4.6.2. Server-side"}], "external": false};
+window.dfnpanelData['shape'] = {"dfnID": "shape", "url": "#shape", "dfnText": "Shape", "refSections": [{"refs": [{"id": "ref-for-shape"}, {"id": "ref-for-shape\u2460"}], "title": "1. Introduction"}, {"refs": [{"id": "ref-for-shape\u2461"}, {"id": "ref-for-shape\u2462"}], "title": "2. Shape Tree"}, {"refs": [{"id": "ref-for-shape\u2463"}, {"id": "ref-for-shape\u2464"}], "title": "3.2. Shape Tree Assignment"}, {"refs": [{"id": "ref-for-shape\u2465"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['skos-graph'] = {"dfnID": "skos-graph", "url": "#skos-graph", "dfnText": "SKOS Graph", "refSections": [{"refs": [{"id": "ref-for-skos-graph"}], "title": "7. Definitions"}], "external": false};
+window.dfnpanelData['unmanaged-resource'] = {"dfnID": "unmanaged-resource", "url": "#unmanaged-resource", "dfnText": "Unmanaged Resource", "refSections": [{"refs": [{"id": "ref-for-unmanaged-resource"}], "title": "4.1. Discover Shape Tree"}], "external": false};
+</script>
+<script>/* Boilerplate: script-dom-helper */
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}
+</script>
